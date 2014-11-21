@@ -1,0 +1,89 @@
+<div class="modal">
+    <ion-header-bar>
+        <h1 class="title">Join</h1>
+        <div class="buttons">
+            <button class="button button-clear" ng-click="closeJoin()">Close</button>
+        </div>
+    </ion-header-bar>
+    <ion-content>
+        {{errormessage}}
+        <form name="joinForm" ng-submit="doJoin(model)" >
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">Username</span>
+                    <input type="text" autofocus="" ng-model="model.username" name="username" placeholder="for login" required ng-minlength=5 ng-maxlength=20/>
+                </label>
+
+                <div class="error" ng-show=" joinForm.username.$dirty && joinForm.username.$invalid">
+                    <small class="error" ng-show="joinForm.username.$error.required"> Your username is required.</small>
+                    <small class="error" ng-show="joinForm.username.$error.minlength"> Your username is required to be at least 5 characters</small>
+                    <small class="error" ng-show="joinForm.username.$error.maxlength"> Your username cannot be longer than 20 characters </small>
+                </div>
+
+
+                <!--won't support until angularjs 1.4 / ionic beta.14 -->
+                <!--<div ng-messages="joinForm.username.$error">-->
+                    <!--&lt;!&ndash;<div ng-message="required">You forgot to enter your user name ...</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div ng-message="username">You did not enter your username address correctly...</div>&ndash;&gt;-->
+                <!--</div>-->
+
+
+                <label class="item item-input">
+                    <span class="input-label">Password</span>
+                    <input type="password" ng-model="model.password" name="password" placeholder="min 5 letters" required ng-minlength=5 ng-maxlength=20/>
+                </label>
+
+                <div class="error" ng-show="joinForm.password.$dirty && joinForm.password.$invalid ">
+                    <small class="error" ng-show="joinForm.password.$error.required"> Your password is required.</small>
+                    <small class="error" ng-show="joinForm.password.$error.minlength"> Your password is required to be at least 5 characters</small>
+                    <small class="error" ng-show="joinForm.password.$error.maxlength"> Your password cannot be longer than 20 characters </small>
+                </div>
+
+
+                <label class="item item-input">
+                    <span class="input-label">Email</span>
+                    <input type="email" ng-model="model.primaryEmail" name="email" placeholder="your email" required ng-minlength=5 ng-maxlength=30/>
+                </label>
+
+                <div class="error" ng-show="joinForm.email.$dirty && joinForm.email.$invalid ">
+                    <small class="error" ng-show="joinForm.email.$error.required"> Your email is required.</small>
+                    <small class="error" ng-show="joinForm.email.$error.minlength"> Your email is required to be at least 5 characters</small>
+                    <small class="error" ng-show="joinForm.email.$error.maxlength"> Your email cannot be longer than 30 characters </small>
+                    <small class="error" ng-show="joinForm.email.$error.email"> Please input a valid email. </small>
+                </div>
+
+
+                <label class="item item-input">
+                    <span class="input-label">First name</span>
+                    <input type="text" ng-model="model.firstName" name="firstName" placeholder="min 2 letters" required ng-minlength=2 ng-maxlength=20/>
+                </label>
+
+                <div class="error" ng-show="joinForm.firstName.$dirty && joinForm.firstName.$invalid">
+                    <small class="error" ng-show="joinForm.firstName.$error.required"> Your first name is required.</small>
+                    <small class="error" ng-show="joinForm.firstName.$error.minlength"> Your first name is required to be at least 2 characters</small>
+                    <small class="error" ng-show="joinForm.firstName.$error.maxlength"> Your first name cannot be longer than 20 characters </small>
+                </div>
+
+
+                <label class="item item-input">
+                    <span class="input-label">Last name</span>
+                    <input type="text" ng-model="model.lastName" name="lastName" placeholder="min 2 letters" required ng-minlength=2 ng-maxlength=20/>
+                </label>
+
+                <div class="error" ng-show="joinForm.lastName.$dirty && joinForm.lastName.$invalid">
+                    <small class="error" ng-show="joinForm.lastName.$error.required"> Your last name is required.</small>
+                    <small class="error" ng-show="joinForm.lastName.$error.minlength"> Your last name is required to be at least 2 characters</small>
+                    <small class="error" ng-show="joinForm.lastName.$error.maxlength"> Your last name cannot be longer than 20 characters </small>
+                </div>
+
+
+                <label class="item">
+                    <button class="button button-block button-positive" type="submit" ng-disabled="joinForm.$invalid">Sign Up</button>
+                </label>
+            </div>
+        </form>
+
+    </ion-content>
+</div>
+
+
