@@ -2,7 +2,7 @@ var app = angular.module('starter.controllers', []);
 
 
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, accountService) {
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, accountService,$ionicLoading, Restangular,$cordovaToast) {
         // Form data for the login modal
         $scope.loginData = {};
         $scope.model = {};
@@ -26,15 +26,23 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
 
         // Perform the login action when the user submits the login form
         $scope.doLogin = function() {
+            $scope.loadingShow();
+
             console.log('Doing login', $scope.loginData);
-            loginService.login($scope.loginData);
+            var loginUserPromise = loginService.login($scope.loginData,Restangular);
 
-
-            // Simulate a login delay. Remove this and replace with your login
-            // code if using a login system
-            $timeout(function() {
+              loginUserPromise.then(function(loginUser) {
+                console.log("success login" , loginUser.id);
+                $scope.loadingHide();
                 $scope.closeLogin();
-            }, 1000);
+                $cordovaToast.showLongBottom('login successfully.')
+              }, function(response) {
+                console.log("Error with status code", response.status);
+                $scope.loadingHide();
+                $scope.errorMessage = response.data.message;
+                $cordovaToast.showLongBottom('login fail :' + response.data.message)
+
+              });
 
         };
 
@@ -80,6 +88,16 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
 
         };
 
+
+         $scope.loadingShow = function() {
+            $ionicLoading.show({
+              template: 'Loading...'
+            });
+         };
+         $scope.loadingHide = function(){
+            $ionicLoading.hide();
+          };
+
     });
 
 
@@ -94,5 +112,14 @@ app.controller('PlaylistsCtrl', function($scope) {
   ];
 });
 
-app.controller('PlaylistCtrl', function($scope, $stateParams) {
+app.controller("ToastController", function($scope, $cordovaToast) {
+
+    $scope.showToast = function(message, duration, location) {
+        $cordovaToast.show(message, duration, location).then(function(success) {
+            console.log("The toast was shown "+ message);
+        }, function (error) {
+            console.log("The toast was not shown due to " + error);
+        });
+    }
+
 });
