@@ -33,8 +33,11 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
 
               loginUserPromise.then(function(loginUser) {
                 console.log("success login" , loginUser.id);
+                //After success login, clean the form data
+                $scope.loginData = {};
                 $scope.loadingHide();
                 $scope.closeLogin();
+                $scope.loginUser = loginUser;
                 $cordovaToast.showLongBottom('login successfully.')
               }, function(response) {
                 console.log("Error with status code", response.status);
