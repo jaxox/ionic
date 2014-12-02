@@ -104,6 +104,61 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
+app.controller('IdeaCtrl', function($scope  ,$ionicModal) {
+
+    // Form data for the login modal
+    $scope.loginData = {};
+   // $scope.model = {};
+
+    // Create the create-account modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/idea/idea_add_modal.html', {
+        scope: $scope
+    }).then(function(modal) {
+            $scope.ideaAddModal = modal;
+    });
+
+
+    // Triggered in the login modal to close it
+    $scope.closeAddIdea = function() {
+        $scope.ideaAddModal.hide();
+    };
+
+    // Open the login modal
+    $scope.addIdea = function() {
+        $scope.ideaAddModal.show();
+    };
+
+    // Perform the login action when the user submits the login form
+    $scope.doAddIdea = function() {
+        $scope.loadingShow();
+
+        console.log('Doing login', $scope.loginData);
+        var loginUserPromise = loginService.login($scope.loginData,Restangular);
+
+        loginUserPromise.then(function(loginUser) {
+            console.log("success login" , loginUser.id);
+            //After success login, clean the form data
+            $scope.loginData = {};
+            $scope.loadingHide();
+            $scope.closeLogin();
+            $scope.loginUser = loginUser;
+            $cordovaToast.showLongBottom('login successfully.')
+        }, function(response) {
+            console.log("Error with status code", response.status);
+            $scope.loadingHide();
+            $scope.errorMessage = response.data.message;
+            $cordovaToast.showLongBottom('login fail :' + response.data.message)
+
+        });
+
+    };
+
+
+});
+
+
+
+
 app.controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
     { title: 'Reggae', id: 1 },
@@ -125,4 +180,28 @@ app.controller("ToastController", function($scope, $cordovaToast) {
         });
     }
 
+});
+
+                                            //service
+app.controller('MyCtrl', function($scope , IdeaTypeaheadService){
+    $scope.movies = IdeaTypeaheadService.getmovies("...");
+    $scope.movies.then(function(data){
+        $scope.movies = data;
+    });
+
+    $scope.getmovies = function(){
+        return $scope.movies;
+    };
+
+    $scope.doSomething = function(typedthings){
+        console.log("Do something like reload data with this: " + typedthings );
+        $scope.newmovies = IdeaTypeaheadService.getmovies(typedthings);
+        $scope.newmovies.then(function(data){
+            $scope.movies = data;
+        });
+    };
+
+    $scope.doSomethingElse = function(suggestion){
+        console.log("Suggestion selected: " + suggestion );
+    };
 });
