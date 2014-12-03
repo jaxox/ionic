@@ -1,0 +1,26 @@
+<div class="modal" >
+
+  <ion-header-bar>
+    <h1 class="title">Add Idea</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeAddIdeaModal()">close</button>
+    </div>
+  </ion-header-bar>
+
+  <ion-content>
+      <div ng-controller="MyCtrl">
+        <autocomplete ng-model="result" attr-placeholder="type to search for ideas ..." click-activation="true" data="movies" on-type="doSomething" on-select="doSomethingElse"></autocomplete>
+      </div>
+
+
+
+  </ion-content>
+
+  <ion-footer-bar>
+      <div class="button-bar" >
+          <button class="button button-positive" ng-click="doAddIdea()">Save</button>
+      </div>
+  </ion-footer-bar>
+
+</div>
+

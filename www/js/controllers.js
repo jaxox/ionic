@@ -104,52 +104,64 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
-app.controller('IdeaCtrl', function($scope  ,$ionicModal) {
+app.controller('EventIdeaCtrl', function($scope  ,$ionicModal) {
 
     // Form data for the login modal
-    $scope.loginData = {};
-   // $scope.model = {};
+    $scope.ideas = [
+        {name: "test"},
+        {name:"test2"}
+    ];
+
 
     // Create the create-account modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/idea/idea_add_modal.html', {
+    $ionicModal.fromTemplateUrl('templates/eventIdea/addIdeaModal.html', {
         scope: $scope
     }).then(function(modal) {
-            $scope.ideaAddModal = modal;
+            $scope.addIdeaModal = modal;
     });
 
 
     // Triggered in the login modal to close it
-    $scope.closeAddIdea = function() {
-        $scope.ideaAddModal.hide();
+    $scope.closeAddIdeaModal = function() {
+        $scope.addIdeaModal.hide();
     };
 
     // Open the login modal
-    $scope.addIdea = function() {
-        $scope.ideaAddModal.show();
+    $scope.openAddIdeaModal = function() {
+        $scope.addIdeaModal.show();
     };
 
     // Perform the login action when the user submits the login form
     $scope.doAddIdea = function() {
-        $scope.loadingShow();
 
-        console.log('Doing login', $scope.loginData);
-        var loginUserPromise = loginService.login($scope.loginData,Restangular);
 
-        loginUserPromise.then(function(loginUser) {
-            console.log("success login" , loginUser.id);
-            //After success login, clean the form data
-            $scope.loginData = {};
-            $scope.loadingHide();
-            $scope.closeLogin();
-            $scope.loginUser = loginUser;
-            $cordovaToast.showLongBottom('login successfully.')
-        }, function(response) {
-            console.log("Error with status code", response.status);
-            $scope.loadingHide();
-            $scope.errorMessage = response.data.message;
-            $cordovaToast.showLongBottom('login fail :' + response.data.message)
+        // save the idea to the list
+        console.log('adding the new idea', this.newIdea);
+          console.log('adding the new idea', $scope.newIdea);
+        // TODO: should check for duplicate before saving
+        $scope.ideas.push({name: this.newIdea});
 
-        });
+        $scope.closeAddIdeaModal();
+        this.newIdea={};
+
+
+//        var loginUserPromise = loginService.login($scope.loginData,Restangular);
+//
+//        loginUserPromise.then(function(loginUser) {
+//            console.log("success login" , loginUser.id);
+//            //After success login, clean the form data
+//            $scope.loginData = {};
+//            $scope.loadingHide();
+//            $scope.closeLogin();
+//            $scope.loginUser = loginUser;
+//            $cordovaToast.showLongBottom('login successfully.')
+//        }, function(response) {
+//            console.log("Error with status code", response.status);
+//            $scope.loadingHide();
+//            $scope.errorMessage = response.data.message;
+//            $cordovaToast.showLongBottom('login fail :' + response.data.message)
+//
+//        });
 
     };
 
@@ -184,6 +196,9 @@ app.controller("ToastController", function($scope, $cordovaToast) {
 
                                             //service
 app.controller('MyCtrl', function($scope , IdeaTypeaheadService){
+
+    $scope.newIdea = "";
+
     $scope.movies = IdeaTypeaheadService.getmovies("...");
     $scope.movies.then(function(data){
         $scope.movies = data;
@@ -195,6 +210,8 @@ app.controller('MyCtrl', function($scope , IdeaTypeaheadService){
 
     $scope.doSomething = function(typedthings){
         console.log("Do something like reload data with this: " + typedthings );
+        $scope.newIdea = typedthings;
+
         $scope.newmovies = IdeaTypeaheadService.getmovies(typedthings);
         $scope.newmovies.then(function(data){
             $scope.movies = data;
@@ -204,4 +221,5 @@ app.controller('MyCtrl', function($scope , IdeaTypeaheadService){
     $scope.doSomethingElse = function(suggestion){
         console.log("Suggestion selected: " + suggestion );
     };
+
 });
