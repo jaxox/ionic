@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages', 'ngCordova' , 'restangular', 'autocomplete'])
+var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages', 'ngCordova' , 'restangular'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -21,11 +21,16 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages
 })
 
 .config(function($stateProvider, $urlRouterProvider, RestangularProvider) {
+  RestangularProvider.setBaseUrl('http://jaxox.ddns.net:8080/api/');
 
-  //RestangularProvider.setBaseUrl('http://localhost:8080/api/');
-  RestangularProvider.setBaseUrl('http://192.168.1.4:8080/api/');
+  RestangularProvider.addElementTransformer('login', true, function(user) {
+          // This will add a method called login that will do a POST to the path login
+          // signature is (name, operation, path, params, headers, elementToPost)
 
+          user.addRestangularMethod('login', 'post', 'login');
 
+          return user;
+  });
 
   $stateProvider
     .state('app', {
@@ -35,14 +40,13 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages
       controller: 'AppCtrl'
     })
 
-    .state('app.idea', {
-        url: "/idea",
-        views: {
-            'menuContent' :{
-                templateUrl: "templates/idea/idea.html",
-                controller: 'IdeaCtrl'
-            }
+    .state('app.meet', {
+      url: "/meet",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/meet.html"
         }
+      }
     })
 
     .state('app.search', {
