@@ -104,13 +104,10 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
-app.controller('EventIdeaCtrl', function($scope  ,$ionicModal) {
+app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService) {
 
     // Form data for the login modal
-    $scope.ideas = [
-        {name: "test"},
-        {name:"test2"}
-    ];
+    $scope.ideas = [{}];
 
 
     // Create the create-account modal that we will use later
@@ -134,15 +131,14 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal) {
     // Perform the login action when the user submits the login form
     $scope.doAddIdea = function() {
 
-
         // save the idea to the list
-        console.log('adding the new idea', this.newIdea);
-          console.log('adding the new idea', $scope.newIdea);
+        console.log('adding the new idea', shareMapService.get('newIdea'));
+
         // TODO: should check for duplicate before saving
-        $scope.ideas.push({name: this.newIdea});
+        $scope.ideas.push({name: shareMapService.get('newIdea')});
 
         $scope.closeAddIdeaModal();
-        this.newIdea={};
+
 
 
 //        var loginUserPromise = loginService.login($scope.loginData,Restangular);
@@ -194,27 +190,28 @@ app.controller("ToastController", function($scope, $cordovaToast) {
 
 });
 
-                                            //service
-app.controller('MyCtrl', function($scope , IdeaTypeaheadService){
+
+app.controller('IdeaTypeaheadCtrl', function($scope , ideaTypeaheadService, shareMapService){
 
     $scope.newIdea = "";
 
-    $scope.movies = IdeaTypeaheadService.getmovies("...");
-    $scope.movies.then(function(data){
-        $scope.movies = data;
+    $scope.ideas = ideaTypeaheadService.getIdeas("...");
+    $scope.ideas.then(function(data){
+        $scope.ideas = data;
     });
 
-    $scope.getmovies = function(){
-        return $scope.movies;
+    $scope.getIdeas = function(){
+        return $scope.ideas;
     };
 
     $scope.doSomething = function(typedthings){
         console.log("Do something like reload data with this: " + typedthings );
-        $scope.newIdea = typedthings;
 
-        $scope.newmovies = IdeaTypeaheadService.getmovies(typedthings);
-        $scope.newmovies.then(function(data){
-            $scope.movies = data;
+        shareMapService.set("newIdea",typedthings);
+
+        $scope.newIdeas = ideaTypeaheadService.getIdeas(typedthings);
+        $scope.newIdeas.then(function(data){
+            $scope.ideas = data;
         });
     };
 
