@@ -104,62 +104,77 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
-app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService) {
+app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, $cordovaToast) {
 
-    // Form data for the login modal
-    $scope.ideas = [{}];
+    // data for the Event Idea modal
+    $scope.selectedIdeas = {};
+    $scope.data = { showDelete: false};
+    $scope.origEditKey = {};
+    $scope.newEditKey = {};
 
 
-    // Create the create-account modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/eventIdea/addIdeaModal.html', {
+//[MODAL]
+    // Create the edit idea item's modal
+    $ionicModal.fromTemplateUrl('templates/eventIdea/editIdeaItemModal.html', {
         scope: $scope
     }).then(function(modal) {
-            $scope.addIdeaModal = modal;
+            $scope.editIdeaItemModal = modal;
     });
+    // Triggered in the modal to close it
+    $scope.closeEditIdeaItemModal = function() {
+        $scope.editIdeaItemModal.hide();
+    };
+    // Open the Edit Idea Item modal
+    $scope.openEditIdeaItemModal = function(key) {
+        $scope.origEditKey = { origEditKey:key};
+        $scope.newEditKey = { newEditKey:key};
 
 
-    // Triggered in the login modal to close it
-    $scope.closeAddIdeaModal = function() {
-        $scope.addIdeaModal.hide();
+
+        $scope.editIdeaItemModal.show();
     };
 
-    // Open the login modal
-    $scope.openAddIdeaModal = function() {
-        $scope.addIdeaModal.show();
-    };
+    $scope.saveEditIdeaItem = function(){
+
+        if(!angular.equals( $scope.origEditKey.origEditKey, $scope.newEditKey.newEditKey) ){
+            //remove origEditKey
+            $scope.doDeleteIdea($scope.origEditKey.origEditKey);
+            //add a new item
+            $scope.doAddIdea($scope.newEditKey.newEditKey);
+            $scope.closeEditIdeaItemModal();
+
+        }
+    }
+
+
 
     // Perform the login action when the user submits the login form
-    $scope.doAddIdea = function() {
+    $scope.doAddIdea = function(selectedIdea) {
 
-        // save the idea to the list
-        console.log('adding the new idea', shareMapService.get('newIdea'));
+        // JUST SAVING THOSE FOR EXAMPLE LATER
+        // console.log('adding the new idea', shareMapService.get('newIdea'));
+        //$scope.ideas.push({name: shareMapService.get('newIdea')});
 
-        // TODO: should check for duplicate before saving
-        $scope.ideas.push({name: shareMapService.get('newIdea')});
+        var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
+        var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
 
-        $scope.closeAddIdeaModal();
-
-
-
-//        var loginUserPromise = loginService.login($scope.loginData,Restangular);
-//
-//        loginUserPromise.then(function(loginUser) {
-//            console.log("success login" , loginUser.id);
-//            //After success login, clean the form data
-//            $scope.loginData = {};
-//            $scope.loadingHide();
-//            $scope.closeLogin();
-//            $scope.loginUser = loginUser;
-//            $cordovaToast.showLongBottom('login successfully.')
-//        }, function(response) {
-//            console.log("Error with status code", response.status);
-//            $scope.loadingHide();
-//            $scope.errorMessage = response.data.message;
-//            $cordovaToast.showLongBottom('login fail :' + response.data.message)
-//
-//        });
-
+        if(ideaName in $scope.selectedIdeas){
+            $cordovaToast.showLongBottom(ideaName + ' is already added ');
+        }else{
+            $scope.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
+            console.log('adding the new idea', origObj);
+        }
     };
+
+    $scope.doDeleteIdea = function (key){
+        console.log("deleting: " +key);
+        delete $scope.selectedIdeas[key];
+    };
+
+
+    $scope.isEmpty = function(obj){
+        return _.size(angular.copy( obj))==0;
+    }
 
 
 });
@@ -230,7 +245,7 @@ app.controller('IdeaTypeaheadCtrl', function($scope, $http, ideaTypeaheadService
         $scope.ideas = data;
     });
 
-    $scope.selectedIdea = function(selected) {
+    $scope.selectedIdeaFunc = function(selected) {
       window.alert('You have selected ' + selected.title);
        shareMapService.set("newIdea",selected);
 
