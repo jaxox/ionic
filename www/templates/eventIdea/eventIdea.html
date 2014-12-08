@@ -57,7 +57,7 @@
 
 
 
-        <label class="item item-input" >
+        <label class="item item-input" ng-controller="DateUtilCtrl" >
             <span class="input-label">Date</span>
             <input type="date" min="{{today | date:'yyyy-MM-dd'}}" max="{{nextYear | date:'yyyy-MM-dd'}}">
         </label>
