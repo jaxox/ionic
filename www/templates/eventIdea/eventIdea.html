@@ -1,27 +1,80 @@
-<ion-view title="Let's Meet">
-  <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
-  <ion-content class="has-header">
-      <div class="item item-divider item-button-right  ">
-          What are you in mood for?
-          <button class="button button-small button-icon custom-button-icon-small" ng-click="openAddIdeaModal()">
-              <i class="icon ion-plus-round custom-ion-android-add"></i>
-          </button>
-      </div>
+<ion-view title="Let's Meet" >
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
 
-      <!--<div class="buttons"><button class="button" ng-click="addIdea()">Add</button>-->
+    <!--<form name="joinForm" ng-submit="doJoin(model)" >-->
+    <ion-content class="has-header" >
 
-      <form name="joinForm" ng-submit="doJoin(model)" >
-      <ion-list>
-          <ion-item ng-repeat="idea in ideas"> {{idea.name}} </ion-item>
-      </ion-list>
+        <div class="item item-divider item-button-right">
+            What are you in mood for?
+            <button class="button button-small button-icon custom-button-icon-small" ng-click="data.showDelete = !data.showDelete" ng-disabled="isEmpty(selectedIdeas)">
+                <i class="icon ion-minus-circled"></i>
+            </button>
+        </div>
 
-              <label class="item">
-                  <button class="button button-block button-positive" type="submit" ng-disabled="joinForm.$invalid">Save</button>
-              </label>
-          </div>
-      </form>
+        <div ng-controller="IdeaTypeaheadCtrl" class="suggest-box" angucomplete-alt id="ex1" placeholder="type to see suggestions" pause="100" selected-object="doAddIdea"
+                    local-data="ideas" search-fields="name" title-field="name" minlength="1" input-class="form-control"
+                    match-class="highlight" override-suggestions="true" clear-selected="true">
+        </div>
 
-  </ion-content>
+        <ion-list show-delete="data.showDelete" can-swipe="true">
+            <ion-item ng-repeat="(key,value) in selectedIdeas">
+                {{key}}
+                <ion-delete-button class="ion-minus-circled" ng-click="doDeleteIdea(key)"></ion-delete-button>
+                <ion-option-button class="ion-minus-circled" ng-click="doDeleteIdea(key)">Delete</ion-option-button>
+                <ion-option-button class="ion-edit" ng-click="openEditIdeaItemModal(key)">Edit</ion-option-button>
+            </ion-item>
+        </ion-list>
+
+        <div class="item item-divider item-button-right">When?</div>
+
+        <div class="row" ng-controller="DateUtilCtrl">
+            <div class="col">
+                <select ng-model="data.selected" ng-options="option.from as option.name for option in dateOptions" class = "item item-input  item-select">
+                    <pre>{{selectedItem | json}}</pre>
+                    <!--<option>Any date</option>-->
+                        <!--<option>Today</option>-->
+                        <!--<option selected>Tomorrow</option>-->
+                        <!--<option>This weekend</option>-->
+                        <!--<option>Next weekend</option>-->
+                        <!--<option>Pick a date</option>-->
+                </select>
+            </div>
+            <div class="col">
+                <select class = "item item-input  item-select">
+                    <option>Anytime</option>
+                    <option>Now</option>
+                    <option selected>Lunch 1pm</option>
+                    <option>Tea 3pm</option>
+                    <option>Dinner 7pm</option>
+                    <option value="showTime">Pick a time</option>
+                </select>
+            </div>
+
+        </div>
+
+
+
+
+        <label class="item item-input" ng-controller="DateUtilCtrl" >
+            <span class="input-label">Date</span>
+            <input type="date" min="{{today | date:'yyyy-MM-dd'}}" max="{{nextYear | date:'yyyy-MM-dd'}}">
+        </label>
+
+        <label class="item item-input">
+            <span class="input-label">time</span>
+            <input type="time">
+        </label>
+
+
+
+
+    </ion-content>
+    <ion-footer-bar>
+        <div class="button-bar" >
+            <button class="button button-positive" type="submit" ng-disabled="joinForm.$invalid">Save</button>
+        </div>
+    </ion-footer-bar>
+    <!--</form>-->
 </ion-view>

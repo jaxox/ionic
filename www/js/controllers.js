@@ -104,68 +104,141 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
-app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService) {
+app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, $cordovaToast) {
 
-    // Form data for the login modal
-    $scope.ideas = [{}];
+    // data for the Event Idea modal
+    $scope.selectedIdeas = {};
+    $scope.data = { showDelete: false};
+    $scope.origEditKey = {};
+    $scope.newEditKey = {};
 
 
-    // Create the create-account modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/eventIdea/addIdeaModal.html', {
+//[MODAL]
+    // Create the edit idea item's modal
+    $ionicModal.fromTemplateUrl('templates/eventIdea/editIdeaItemModal.html', {
         scope: $scope
     }).then(function(modal) {
-            $scope.addIdeaModal = modal;
+            $scope.editIdeaItemModal = modal;
     });
+    // Triggered in the modal to close it
+    $scope.closeEditIdeaItemModal = function() {
+        $scope.editIdeaItemModal.hide();
+    };
+    // Open the Edit Idea Item modal
+    $scope.openEditIdeaItemModal = function(key) {
+        $scope.origEditKey = { origEditKey:key};
+        $scope.newEditKey = { newEditKey:key};
 
 
-    // Triggered in the login modal to close it
-    $scope.closeAddIdeaModal = function() {
-        $scope.addIdeaModal.hide();
+
+        $scope.editIdeaItemModal.show();
     };
 
-    // Open the login modal
-    $scope.openAddIdeaModal = function() {
-        $scope.addIdeaModal.show();
-    };
+    $scope.saveEditIdeaItem = function(){
+
+        if(!angular.equals( $scope.origEditKey.origEditKey, $scope.newEditKey.newEditKey) ){
+            //remove origEditKey
+            $scope.doDeleteIdea($scope.origEditKey.origEditKey);
+            //add a new item
+            $scope.doAddIdea($scope.newEditKey.newEditKey);
+            $scope.closeEditIdeaItemModal();
+
+        }
+    }
+
+
 
     // Perform the login action when the user submits the login form
-    $scope.doAddIdea = function() {
+    $scope.doAddIdea = function(selectedIdea) {
 
-        // save the idea to the list
-        console.log('adding the new idea', shareMapService.get('newIdea'));
+        // JUST SAVING THOSE FOR EXAMPLE LATER
+        // console.log('adding the new idea', shareMapService.get('newIdea'));
+        //$scope.ideas.push({name: shareMapService.get('newIdea')});
 
-        // TODO: should check for duplicate before saving
-        $scope.ideas.push({name: shareMapService.get('newIdea')});
+        var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
+        var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
 
-        $scope.closeAddIdeaModal();
-
-
-
-//        var loginUserPromise = loginService.login($scope.loginData,Restangular);
-//
-//        loginUserPromise.then(function(loginUser) {
-//            console.log("success login" , loginUser.id);
-//            //After success login, clean the form data
-//            $scope.loginData = {};
-//            $scope.loadingHide();
-//            $scope.closeLogin();
-//            $scope.loginUser = loginUser;
-//            $cordovaToast.showLongBottom('login successfully.')
-//        }, function(response) {
-//            console.log("Error with status code", response.status);
-//            $scope.loadingHide();
-//            $scope.errorMessage = response.data.message;
-//            $cordovaToast.showLongBottom('login fail :' + response.data.message)
-//
-//        });
-
+        if(ideaName in $scope.selectedIdeas){
+            $cordovaToast.showLongBottom(ideaName + ' is already added ');
+        }else{
+            $scope.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
+            console.log('adding the new idea', origObj);
+        }
     };
+
+    $scope.doDeleteIdea = function (key){
+        console.log("deleting: " +key);
+        delete $scope.selectedIdeas[key];
+    };
+
+
+    $scope.isEmpty = function(obj){
+        return _.size(angular.copy( obj))==0;
+    }
 
 
 });
 
 
 
+
+app.controller('DateUtilCtrl', function($scope) {
+
+
+
+     $scope.today = new Date();
+//     var day = $scope.today.getDay();
+//
+//
+//
+//     $scope.tomorrow = new Date().setDate($scope.today.getDate() + 1);
+
+     $scope.nextYear = new Date().setFullYear( $scope.today.getFullYear()+1, $scope.today.getMonth(), $scope.today.getDate());
+
+//
+//    console.log("today",$scope.today);
+//    console.log("tomorrow",$scope.tomorrow);
+//
+//
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//
+
+
+
+    //TODO: show your friend's birthday witin 30 days
+    //TODO: show holiday within next 30 days
+
+
+    $scope.dateOptions = [
+      {name:"Today", from:$scope.today, to:""},
+      {name:"Tomorrow", from:"light1" , to:""},
+      {name:"This Sat", from:"dark2" , to:""},
+      {name:"This Sun", from:"dark3" , to:""},
+      {name:"This Weekend", from:"dark4" , to:""},
+      {name:"Next Sat", from:"dark5" , to:""},
+      {name:"Next Sun", from:"dark6" , to:""},
+      {name:"Next Weekend", from:"dark7" , to:""},
+      {name:"Pick A Date", from:"light8" , to:""}
+    ];
+
+//        $scope.dateOptions = [
+//          {name:'Today',        from:'' },
+//          {name:'Tomorrow',     from:'light'},
+//          {name:'This Sat',     from:'dark' },
+//          {name:'This Sun',     from:'dark' },
+//          {name:'This Weekend', from:'dark'},
+//          {name:'Next Sat',     from:'dark' },
+//          {name:'Next Sun',     from:'dark' },
+//          {name:'Next Weekend', from:'dark'},
+//          {name:'Pick A Date',  from:'light' }
+//        ];
+
+    $scope.data = { selected : $scope.dateOptions[1] };
+});
 
 app.controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
@@ -230,7 +303,7 @@ app.controller('IdeaTypeaheadCtrl', function($scope, $http, ideaTypeaheadService
         $scope.ideas = data;
     });
 
-    $scope.selectedIdea = function(selected) {
+    $scope.selectedIdeaFunc = function(selected) {
       window.alert('You have selected ' + selected.title);
        shareMapService.set("newIdea",selected);
 

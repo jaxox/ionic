@@ -16,3 +16,11 @@
 .padding16{
     padding:16px;
 }
+
+.suggest-box{
+    padding-left:16px;
+    padding-right:16px;
+    padding-top:4px;
+    padding-button:4px;
+
+}

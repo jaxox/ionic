@@ -1,0 +1,29 @@
+<div class="modal" ng-controller="IdeaTypeaheadCtrl">
+  <form name="editIdeaItemForm">
+  <ion-header-bar>
+    <h1 class="title">Edit Idea</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeEditIdeaItemModal()">close</button>
+    </div>
+  </ion-header-bar>
+
+  <ion-content>
+
+      <li class="item item-input">
+          <input type="text" autofocus="" placeholder="" name="description" ng-model="newEditKey.newEditKey" required />
+      </li>
+
+
+
+
+
+  </ion-content>
+
+  <ion-footer-bar>
+      <div class="button-bar" >
+          <button class="button button-positive" ng-click="saveEditIdeaItem()" ng-disabled="editIdeaItemForm.$invalid">Edit</button>
+      </div>
+  </ion-footer-bar>
+</form>
+</div>
+
