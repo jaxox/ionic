@@ -182,6 +182,64 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
 
 
+app.controller('DateUtilCtrl', function($scope) {
+
+
+
+     $scope.today = new Date();
+//     var day = $scope.today.getDay();
+//
+//
+//
+//     $scope.tomorrow = new Date().setDate($scope.today.getDate() + 1);
+
+     $scope.nextYear = new Date().setFullYear( $scope.today.getFullYear()+1, $scope.today.getMonth(), $scope.today.getDate());
+
+//
+//    console.log("today",$scope.today);
+//    console.log("tomorrow",$scope.tomorrow);
+//
+//
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//    console.log("today",$scope.today);
+//
+
+
+
+    //TODO: show your friend's birthday witin 30 days
+    //TODO: show holiday within next 30 days
+
+
+    $scope.dateOptions = [
+      {name:"Today", from:$scope.today, to:""},
+      {name:"Tomorrow", from:"light1" , to:""},
+      {name:"This Sat", from:"dark2" , to:""},
+      {name:"This Sun", from:"dark3" , to:""},
+      {name:"This Weekend", from:"dark4" , to:""},
+      {name:"Next Sat", from:"dark5" , to:""},
+      {name:"Next Sun", from:"dark6" , to:""},
+      {name:"Next Weekend", from:"dark7" , to:""},
+      {name:"Pick A Date", from:"light8" , to:""}
+    ];
+
+//        $scope.dateOptions = [
+//          {name:'Today',        from:'' },
+//          {name:'Tomorrow',     from:'light'},
+//          {name:'This Sat',     from:'dark' },
+//          {name:'This Sun',     from:'dark' },
+//          {name:'This Weekend', from:'dark'},
+//          {name:'Next Sat',     from:'dark' },
+//          {name:'Next Sun',     from:'dark' },
+//          {name:'Next Weekend', from:'dark'},
+//          {name:'Pick A Date',  from:'light' }
+//        ];
+
+    $scope.data = { selected : $scope.dateOptions[1] };
+});
+
 app.controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
     { title: 'Reggae', id: 1 },
