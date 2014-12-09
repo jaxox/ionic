@@ -38,32 +38,43 @@
 
             <label class="item item-input item-select" ng-show="selectedDate===null">
                 <span class="input-label">from</span>
-                <input type="date" min="{{todayAsStr}}" max="{{nextYearAsStr}}">
+                <input type="date" min="{{todayAsStr}}" max="{{nextYearAsStr}}" ng-model="fromDate"  ng-change="changeToDate(fromDate)">
             </label>
 
             <label class="item item-input item-select" ng-show="selectedDate===null">
                 <span class="input-label">to</span>
-                <input type="date" min="{{todayAsStr}}" max="{{nextYearAsStr}}">
+                <input type="date" min=" {{fromDate!=null ? fromDate : todayAsStr}}" max="{{nextYearAsStr}}" ng-model="toDate">
             </label>
 
             <div class="item item-input item-select">
-                <div class="input-label">Time:</div>
-                <select ng-model="selectedTime" ng-options="timeOption.from as timeOption.name for timeOption in timeOptions"></select>
-
+                <div class="input-label">Start Time:</div>
+                <input type="time" ng-model="selectedStartTime"/>
             </div>
 
-            <label class="item item-input padding-bottom13">
-                <span class="input-label">from</span>
-                <input type="time">
+
+            <label class="item item-input" ng-show="selectedStartTime!=null">
+                <div class="input-label">End Time:</div>
+                <input type="time" ng-model="selectedEndTime"/>
             </label>
 
-            <label class="item item-input padding-bottom13">
-                <span class="input-label">to</span>
-                <input type="time">
-            </label>
+
         </div>
 
-        <div class="item item-divider">Where?</div>
+
+        <div class="item item-divider item-button-right">
+            Where?
+            <button class="button button-small button-icon custom-button-icon-small" ng-click="data.showDelete = !data.showDelete" ng-disabled="isEmpty(selectedIdeas)">
+                <i class="icon ion-minus-circled"></i>
+            </button>
+        </div>
+
+        <label class="item item-input">
+            <input type="text" g-places-autocomplete ng-model="locationSelected" placeholder="find a location" />
+        </label>
+
+        <!--<h5>Result:</h5>-->
+        <!--<pre>{{locationSelected | json}}</pre>-->
+
 
 
 

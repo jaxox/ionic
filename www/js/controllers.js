@@ -182,7 +182,11 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
 
 
-app.controller('DateUtilCtrl', function($scope, $filter) {
+app.controller('DateUtilCtrl', function($scope, $filter ) {
+
+     $scope.changeToDate = function(date){
+        $scope.toDate = date;
+     };
 
      var dateToString = function(date) {
          return $filter('date')(date, "yyyy-MM-dd");
@@ -201,6 +205,8 @@ app.controller('DateUtilCtrl', function($scope, $filter) {
         var daysForward = (7 * noOfNextWeek ) - normalizedDay;
         return dateToString(new Date(+date + (daysForward * 86400000)));
      };
+
+
 
 
      var today = new Date();
@@ -244,16 +250,17 @@ app.controller('DateUtilCtrl', function($scope, $filter) {
 
 
 
-    $scope.timeOptions = [
-        {name:"Anytime",        from:$scope.todayAsStr,     to:""},
-        {name:"Lunch (1pm)",    from:$scope.thisFriAsStr ,  to:""},
-        {name:"Tea (3:30pm)",   from:$scope.thisSatAsStr ,  to:""},
-        {name:"Dinner (7pm)",   from:$scope.thisSunAsStr ,  to:""},
-        {name:"Pick a time ",   from:null , to:null}
-    ];
 
-    $scope.selectedTime = $scope.timeOptions[1].from;
+
+    $scope.selectedStartTime = null;
+    $scope.fromDate = $scope.todayAsStr;
+    $scope.toDate = $scope.todayAsStr;
+
+
+
+
 });
+
 
 app.controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
@@ -279,35 +286,6 @@ app.controller("ToastController", function($scope, $cordovaToast) {
 });
 
 
-//app.controller('IdeaTypeaheadCtrl', function($scope , ideaTypeaheadService, shareMapService){
-//
-//    $scope.newIdea = "";
-//
-//    $scope.ideas = ideaTypeaheadService.getIdeas("...");
-//    $scope.ideas.then(function(data){
-//        $scope.ideas = data;
-//    });
-//
-//    $scope.getIdeas = function(){
-//        return $scope.ideas;
-//    };
-//
-//    $scope.doSomething = function(typedthings){
-//        console.log("Do something like reload data with this: " + typedthings );
-//
-//        shareMapService.set("newIdea",typedthings);
-//
-//        $scope.newIdeas = ideaTypeaheadService.getIdeas(typedthings);
-//        $scope.newIdeas.then(function(data){
-//            $scope.ideas = data;
-//        });
-//    };
-//
-//    $scope.doSomethingElse = function(suggestion){
-//        console.log("Suggestion selected: " + suggestion );
-//    };
-//
-//});
 
 app.controller('IdeaTypeaheadCtrl', function($scope, $http, ideaTypeaheadService, shareMapService){
 
