@@ -27,45 +27,47 @@
             </ion-item>
         </ion-list>
 
-        <div class="item item-divider item-button-right">When?</div>
+        <div class="item item-divider">When?</div>
 
-        <div class="row" ng-controller="DateUtilCtrl">
-            <div class="col">
-                <select ng-model="data.selected" ng-options="option.from as option.name for option in dateOptions" class = "item item-input  item-select">
-                    <pre>{{selectedItem | json}}</pre>
-                    <!--<option>Any date</option>-->
-                        <!--<option>Today</option>-->
-                        <!--<option selected>Tomorrow</option>-->
-                        <!--<option>This weekend</option>-->
-                        <!--<option>Next weekend</option>-->
-                        <!--<option>Pick a date</option>-->
-                </select>
-            </div>
-            <div class="col">
-                <select class = "item item-input  item-select">
-                    <option>Anytime</option>
-                    <option>Now</option>
-                    <option selected>Lunch 1pm</option>
-                    <option>Tea 3pm</option>
-                    <option>Dinner 7pm</option>
-                    <option value="showTime">Pick a time</option>
-                </select>
+        <div ng-controller="DateUtilCtrl" >
+
+            <div class="item item-input item-select ">
+                <div class="input-label">Date:</div>
+                <select ng-model="selectedDate" ng-options="dateOption.from as dateOption.name for dateOption in dateOptions"></select>
             </div>
 
+            <label class="item item-input item-select" ng-show="selectedDate===null">
+                <span class="input-label">from</span>
+                <input type="date" min="{{todayAsStr}}" max="{{nextYearAsStr}}">
+            </label>
+
+            <label class="item item-input item-select" ng-show="selectedDate===null">
+                <span class="input-label">to</span>
+                <input type="date" min="{{todayAsStr}}" max="{{nextYearAsStr}}">
+            </label>
+
+            <div class="item item-input item-select">
+                <div class="input-label">Time:</div>
+                <select ng-model="selectedTime" ng-options="timeOption.from as timeOption.name for timeOption in timeOptions"></select>
+
+            </div>
+
+            <label class="item item-input padding-bottom13">
+                <span class="input-label">from</span>
+                <input type="time">
+            </label>
+
+            <label class="item item-input padding-bottom13">
+                <span class="input-label">to</span>
+                <input type="time">
+            </label>
         </div>
 
+        <div class="item item-divider">Where?</div>
 
 
 
-        <label class="item item-input" ng-controller="DateUtilCtrl" >
-            <span class="input-label">Date</span>
-            <input type="date" min="{{today | date:'yyyy-MM-dd'}}" max="{{nextYear | date:'yyyy-MM-dd'}}">
-        </label>
 
-        <label class="item item-input">
-            <span class="input-label">time</span>
-            <input type="time">
-        </label>
 
 
 

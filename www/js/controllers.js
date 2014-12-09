@@ -182,62 +182,77 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
 
 
-app.controller('DateUtilCtrl', function($scope) {
+app.controller('DateUtilCtrl', function($scope, $filter) {
+
+     var dateToString = function(date) {
+         return $filter('date')(date, "yyyy-MM-dd");
+     };
+
+    /**
+     * Getting the date of coming weekend's date
+     *
+     * @param date
+     * @param dayB4EndOfWeek - int; Friday is 2, Sat is 1, Sun is 0
+     * @param noOfNextWeek - this coming week is 1, next week is 2
+     * @returns {*}
+     */
+     var getNext = function(date, dayB4EndOfWeek, noOfNextWeek) {
+        var normalizedDay = (date.getDay() + dayB4EndOfWeek) % 7;
+        var daysForward = (7 * noOfNextWeek ) - normalizedDay;
+        return dateToString(new Date(+date + (daysForward * 86400000)));
+     };
 
 
+     var today = new Date();
+     $scope.todayAsStr = dateToString(today);
+     $scope.tomorrowAsStr = dateToString(new Date().setDate(today.getDate() + 1));
+     $scope.nextYearAsStr = dateToString(new Date(today.getFullYear()+1, today.getMonth(), today.getDate()));
+     $scope.thisFriAsStr = getNext(today, 2, 1);
+     $scope.thisSatAsStr = getNext(today, 1, 1);
+     $scope.thisSunAsStr = getNext(today, 0, 1);
+     $scope.nextFriAsStr = getNext(today, 2, 2);
+     $scope.nextSatAsStr = getNext(today, 1, 2);
+     $scope.nextSunAsStr = getNext(today, 0, 2);
 
-     $scope.today = new Date();
-//     var day = $scope.today.getDay();
-//
-//
-//
-//     $scope.tomorrow = new Date().setDate($scope.today.getDate() + 1);
+    console.log("today", $scope.todayAsStr);
+    console.log("tomorrow",$scope.tomorrowAsStr);
+    console.log("nextYear",$scope.nextYearAsStr);
+    console.log("thisFri",$scope.thisFriAsStr);
+    console.log("thisSat",$scope.thisSatAsStr);
+    console.log("thisSun",$scope.thisSunAsStr);
+    console.log("nextFri",$scope.nextFriAsStr);
+    console.log("nextSat",$scope.nextSatAsStr);
+    console.log("nextSun",$scope.nextSunAsStr);
 
-     $scope.nextYear = new Date().setFullYear( $scope.today.getFullYear()+1, $scope.today.getMonth(), $scope.today.getDate());
-
-//
-//    console.log("today",$scope.today);
-//    console.log("tomorrow",$scope.tomorrow);
-//
-//
-//    console.log("today",$scope.today);
-//    console.log("today",$scope.today);
-//    console.log("today",$scope.today);
-//    console.log("today",$scope.today);
-//    console.log("today",$scope.today);
-//
-
-
-
-    //TODO: show your friend's birthday witin 30 days
+    //TODO: show your friend's birthday within 30 days
     //TODO: show holiday within next 30 days
-
-
     $scope.dateOptions = [
-      {name:"Today", from:$scope.today, to:""},
-      {name:"Tomorrow", from:"light1" , to:""},
-      {name:"This Sat", from:"dark2" , to:""},
-      {name:"This Sun", from:"dark3" , to:""},
-      {name:"This Weekend", from:"dark4" , to:""},
-      {name:"Next Sat", from:"dark5" , to:""},
-      {name:"Next Sun", from:"dark6" , to:""},
-      {name:"Next Weekend", from:"dark7" , to:""},
-      {name:"Pick A Date", from:"light8" , to:""}
+      {name:"Today",        from:$scope.todayAsStr, to:""},
+      {name:"Tomorrow",     from:$scope.tomorrowAsStr , to:""},
+      {name:"This Fri",     from:$scope.thisFriAsStr , to:""},
+      {name:"This Sat",     from:$scope.thisSatAsStr , to:""},
+      {name:"This Sun",     from:$scope.thisSunAsStr , to:""},
+      {name:"This Weekend", from:$scope.thisSatAsStr , to:$scope.thisSunAsStr},
+      {name:"Next Fri",     from:$scope.nextFriAsStr , to:""},
+      {name:"Next Sat",     from:$scope.nextSatAsStr , to:""},
+      {name:"Next Sun",     from:$scope.nextSunAsStr , to:""},
+      {name:"Next Weekend", from:$scope.nextSatAsStr , to:$scope.nextSunAsStr},
+      {name:"Pick A Date",  from:null , to:null}
     ];
 
-//        $scope.dateOptions = [
-//          {name:'Today',        from:'' },
-//          {name:'Tomorrow',     from:'light'},
-//          {name:'This Sat',     from:'dark' },
-//          {name:'This Sun',     from:'dark' },
-//          {name:'This Weekend', from:'dark'},
-//          {name:'Next Sat',     from:'dark' },
-//          {name:'Next Sun',     from:'dark' },
-//          {name:'Next Weekend', from:'dark'},
-//          {name:'Pick A Date',  from:'light' }
-//        ];
+    $scope.selectedDate = $scope.dateOptions[1].from;
 
-    $scope.data = { selected : $scope.dateOptions[1] };
+
+
+    $scope.timeOptions = [
+        {name:"Anytime",        from:$scope.todayAsStr,     to:""},
+        {name:"Lunch (1pm)",    from:$scope.thisFriAsStr ,  to:""},
+        {name:"Tea (3:30pm)",   from:$scope.thisSatAsStr ,  to:""},
+        {name:"Dinner (7pm)",   from:$scope.thisSunAsStr ,  to:""},
+        {name:"Pick a time ",   from:null , to:null}
+    ];
+
+    $scope.selectedTime = $scope.timeOptions[1].from;
 });
 
 app.controller('PlaylistsCtrl', function($scope) {
