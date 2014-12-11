@@ -177,6 +177,22 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
     }
 
 
+
+
+    //Location
+    $scope.doAddLocation = function(selectedLocation) {
+
+        var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
+        var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
+
+        if(ideaName in $scope.selectedIdeas){
+            $cordovaToast.showLongBottom(ideaName + ' is already added ');
+        }else{
+            $scope.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
+            console.log('adding the new idea', origObj);
+        }
+    };
+
 });
 
 

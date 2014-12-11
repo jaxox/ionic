@@ -11,12 +11,14 @@
     padding: 6px;
     cursor: pointer;
     z-index: 9999;
-    position: absolute;
+    position: relative;
     /*top: 32px;
     left: 0px;
     */
     margin-top: -6px;
     background-color: #ffffff;
+
+    top:auto;
 }
 
 .angucomplete-searching {
