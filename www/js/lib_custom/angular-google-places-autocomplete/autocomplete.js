@@ -71,9 +71,13 @@ angular.module('google.places', [])
                     }
 
                     function initAutocompleteDrawer() {
+
+                        var testing =angular.element($document[0].querySelector(".g-places-autocomplete-01"));
+
                         // Drawer element used to display predictions
                         var drawerElement = angular.element('<div g-places-autocomplete-drawer></div>'),
-                            body = angular.element($document[0].body),
+                        //TODO: need to pass the id here instead of hardcoding
+                            body = angular.element($document[0].querySelector(".g-places-autocomplete-01")),
                             $drawer;
 
                         drawerElement.attr({
@@ -85,6 +89,9 @@ angular.module('google.places', [])
                         });
 
                         $drawer = $compile(drawerElement)($scope);
+
+
+
                         body.append($drawer);  // Append to DOM
                     }
 
@@ -332,14 +339,27 @@ angular.module('google.places', [])
 
 
     .directive('gPlacesAutocompleteDrawer', ['$window', '$document', function ($window, $document) {
+//working
+//        var TEMPLATE = [
+//            '<div class="pac-container" ng-if="isOpen()" ng-style="{top: position.top+\'px\', left: 15+\'px\', width: position.width+\'px\'}" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">',
+//            '  <div class="pac-item" g-places-autocomplete-prediction index="$index" prediction="prediction" query="query"',
+//            '       ng-repeat="prediction in predictions track by $index" ng-class="{\'pac-item-selected\': isActive($index) }"',
+//            '       ng-mouseenter="selectActive($index)" ng-click="selectPrediction($index)" role="option" id="{{prediction.id}}">',
+//            '  </div>',
+//            '</div>'
+//        ];
+
+
+//testing
         var TEMPLATE = [
-            '<div class="pac-container" ng-if="isOpen()" ng-style="{top: position.top+\'px\', left: 15+\'px\', width: position.width+\'px\'}" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">',
+            '<div class="pac-container" ng-if="isOpen()" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">',
             '  <div class="pac-item" g-places-autocomplete-prediction index="$index" prediction="prediction" query="query"',
             '       ng-repeat="prediction in predictions track by $index" ng-class="{\'pac-item-selected\': isActive($index) }"',
             '       ng-mouseenter="selectActive($index)" ng-click="selectPrediction($index)" role="option" id="{{prediction.id}}">',
             '  </div>',
             '</div>'
         ];
+
 
         return {
             restrict: 'A',

@@ -19,10 +19,12 @@
                 <i class="icon ion-minus-circled"></i>
             </button>
         </div>
-        <label class="item item-input">
-            <!--selected-call : after an option is selected then call the function doAddLocation   ng-click="selectedLocation = null"-->
-            <input type="text" g-places-autocomplete ng-model="selectedLocation"  selected-call="doAddLocation"   placeholder="find a location" force-selection="false" ng-disabled="getSize(selectedLocations)>=5"/>
-        </label>
+        <div class="g-places-autocomplete-01 suggest-box google-place-box">
+            <!--<label class="item item-input ">-->
+                <!--selected-call : after an option is selected then call the function doAddLocation   ng-click="selectedLocation = null"-->
+                <input type="text" g-places-autocomplete ng-model="selectedLocation"  selected-call="doAddLocation"   placeholder="find a location" force-selection="false" ng-disabled="getSize(selectedLocations)>=5"/>
+            <!--</label>-->
+        </div>
         <ion-list show-delete="locationData.showDelete" can-swipe="true">
             <ion-item ng-repeat="(key,value) in selectedLocations">
                 {{key}} <p><small>{{value}}</small></p>
