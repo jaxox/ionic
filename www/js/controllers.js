@@ -108,6 +108,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
     // data for the Event Idea modal
     $scope.selectedIdeas = {};
+    $scope.selectedLocations = {};
     $scope.data = { showDelete: false};
     $scope.origEditKey = {};
     $scope.newEditKey = {};
@@ -128,14 +129,10 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
     $scope.openEditIdeaItemModal = function(key) {
         $scope.origEditKey = { origEditKey:key};
         $scope.newEditKey = { newEditKey:key};
-
-
-
         $scope.editIdeaItemModal.show();
     };
 
     $scope.saveEditIdeaItem = function(){
-
         if(!angular.equals( $scope.origEditKey.origEditKey, $scope.newEditKey.newEditKey) ){
             //remove origEditKey
             $scope.doDeleteIdea($scope.origEditKey.origEditKey);
@@ -154,7 +151,9 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
         // JUST SAVING THOSE FOR EXAMPLE LATER
         // console.log('adding the new idea', shareMapService.get('newIdea'));
         //$scope.ideas.push({name: shareMapService.get('newIdea')});
-
+        if( $scope.getSize( $scope.selectedIdeas) >=5){
+            return;
+        }
         var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
         var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
 
@@ -163,6 +162,10 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
         }else{
             $scope.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
             console.log('adding the new idea', origObj);
+
+            if( $scope.getSize( $scope.selectedIdeas) >= 5){
+                $cordovaToast.showLongBottom('Reached the maximum 5 ideas ');
+            }
         }
     };
 
@@ -176,22 +179,60 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
         return _.size(angular.copy( obj))==0;
     }
 
+    $scope.getSize = function(obj){
+        return _.size(angular.copy( obj));
+    }
+
 
 
 
     //Location
     $scope.doAddLocation = function(selectedLocation) {
 
-        var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
-        var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
-
-        if(ideaName in $scope.selectedIdeas){
-            $cordovaToast.showLongBottom(ideaName + ' is already added ');
-        }else{
-            $scope.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
-            console.log('adding the new idea', origObj);
+        if( $scope.getSize( $scope.selectedLocations) >=5){
+            return;
         }
+
+        console.log(selectedLocation);
+
+        var formattedResult = format(selectedLocation);
+
+        if(formattedResult.name in $scope.selectedLocations){
+            $cordovaToast.showLongBottom(formattedResult.name + ' is already added ');
+        }else{
+            $scope.selectedLocations[formattedResult.name] = formattedResult.address  ;
+            console.log('adding the new address', formattedResult);
+
+            if( $scope.getSize( $scope.selectedLocations) >= 5){
+                $cordovaToast.showLongBottom('Reached the maximum 5 addresses ');
+            }
+        }
+
     };
+
+    $scope.doDeleteLocation = function (key){
+        console.log("deleting: " +key);
+        delete $scope.selectedLocations[key];
+    };
+
+    var format = function(selectedLocation) {
+        var viewValue = {
+                    name: "",
+                    address: null
+
+        };
+
+        if (angular.isString(selectedLocation)) {
+            viewValue.name = selectedLocation;
+        } else if (angular.isObject(selectedLocation)) {
+            viewValue.address = selectedLocation.formatted_address;
+            viewValue.name = selectedLocation.name ;
+
+            console.log("Selected name ane add: "+viewValue.name + " " +viewValue.address);
+        }
+
+        return viewValue;
+    }
 
 });
 
@@ -249,6 +290,7 @@ app.controller('DateUtilCtrl', function($scope, $filter ) {
     //TODO: show your friend's birthday within 30 days
     //TODO: show holiday within next 30 days
     $scope.dateOptions = [
+      {name:"Any date",     from:"0", to:"0"},
       {name:"Today",        from:$scope.todayAsStr, to:""},
       {name:"Tomorrow",     from:$scope.tomorrowAsStr , to:""},
       {name:"This Fri",     from:$scope.thisFriAsStr , to:""},
@@ -262,7 +304,7 @@ app.controller('DateUtilCtrl', function($scope, $filter ) {
       {name:"Pick A Date",  from:null , to:null}
     ];
 
-    $scope.selectedDate = $scope.dateOptions[1].from;
+    $scope.selectedDate = $scope.dateOptions[2].from;
 
 
 
