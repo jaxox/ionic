@@ -1,7 +1,5 @@
 var app = angular.module('starter.controllers', []);
 
-
-
 app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, accountService,$ionicLoading, Restangular,$cordovaToast) {
         // Form data for the login modal
         $scope.loginData = {};
@@ -78,17 +76,10 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
                 // Submit as normal
                 console.log('Doing join', $scope.model);
                 accountService.join($scope);
-
-
-
             } else {
                 this.joinForm.submitted = true;
                 console.log('invalid submitted ', $scope.model);
             }
-
-
-
-
         };
 
 
@@ -104,14 +95,31 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
-app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, $cordovaToast) {
+app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, $cordovaToast) {
 
     // data for the Event Idea modal
-    $scope.selectedIdeas = {};
-    $scope.selectedLocations = {};
+    $scope.model.selectedIdeas = {};
+    $scope.model.selectedLocations = {};
+    $scope.model.selectedDate = {};
     $scope.data = { showDelete: false};
     $scope.origEditKey = {};
     $scope.newEditKey = {};
+    $scope.model.dateOptions = {};
+    $scope.model.str_today = {};
+    $scope.model.str_nextYear = {};
+    $scope.model.fromDate = {};
+    $scope.model.toDate = {};
+
+
+    var $promise  = dateInfoService.getDateOptions("...");
+    $promise.then(function(data){
+         $scope.model.dateOptions = data;
+         $scope.model.selectedDate = data[2].from;
+         $scope.model.str_today = dateInfoService.getTodayStr();
+         $scope.model.str_nextYear = dateInfoService.getNextYearStr();
+         $scope.model.fromDate = dateInfoService.getTodayStr();
+         $scope.model.toDate = dateInfoService.getTodayStr();
+    });
 
 
 //[MODAL]
@@ -131,7 +139,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
         $scope.newEditKey = { newEditKey:key};
         $scope.editIdeaItemModal.show();
     };
-
+    // Save the edited idea item
     $scope.saveEditIdeaItem = function(){
         if(!angular.equals( $scope.origEditKey.origEditKey, $scope.newEditKey.newEditKey) ){
             //remove origEditKey
@@ -139,31 +147,29 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
             //add a new item
             $scope.doAddIdea($scope.newEditKey.newEditKey);
             $scope.closeEditIdeaItemModal();
-
         }
     }
 
 
-
-    // Perform the login action when the user submits the login form
+    // add idea item to the list
     $scope.doAddIdea = function(selectedIdea) {
 
         // JUST SAVING THOSE FOR EXAMPLE LATER
         // console.log('adding the new idea', shareMapService.get('newIdea'));
         //$scope.ideas.push({name: shareMapService.get('newIdea')});
-        if( $scope.getSize( $scope.selectedIdeas) >=5){
+        if( $scope.getSize( $scope.model.selectedIdeas) >=5){
             return;
         }
         var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
         var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
 
-        if(ideaName in $scope.selectedIdeas){
+        if(ideaName in $scope.model.selectedIdeas){
             $cordovaToast.showLongBottom(ideaName + ' is already added ');
         }else{
-            $scope.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
+            $scope.model.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
             console.log('adding the new idea', origObj);
 
-            if( $scope.getSize( $scope.selectedIdeas) >= 5){
+            if( $scope.getSize( $scope.model.selectedIdeas) >= 5){
                 $cordovaToast.showLongBottom('Reached the maximum 5 ideas ');
             }
         }
@@ -171,7 +177,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
     $scope.doDeleteIdea = function (key){
         console.log("deleting: " +key);
-        delete $scope.selectedIdeas[key];
+        delete $scope.model.selectedIdeas[key];
     };
 
 
@@ -189,7 +195,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
     //Location
     $scope.doAddLocation = function(selectedLocation) {
 
-        if( $scope.getSize( $scope.selectedLocations) >=5){
+        if( $scope.getSize( $scope.model.selectedLocations) >=5){
             return;
         }
 
@@ -197,13 +203,13 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
         var formattedResult = format(selectedLocation);
 
-        if(formattedResult.name in $scope.selectedLocations){
+        if(formattedResult.name in $scope.model.selectedLocations){
             $cordovaToast.showLongBottom(formattedResult.name + ' is already added ');
         }else{
-            $scope.selectedLocations[formattedResult.name] = formattedResult.address  ;
+            $scope.model.selectedLocations[formattedResult.name] = formattedResult.address  ;
             console.log('adding the new address', formattedResult);
 
-            if( $scope.getSize( $scope.selectedLocations) >= 5){
+            if( $scope.getSize( $scope.model.selectedLocations) >= 5){
                 $cordovaToast.showLongBottom('Reached the maximum 5 addresses ');
             }
         }
@@ -212,14 +218,13 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
 
     $scope.doDeleteLocation = function (key){
         console.log("deleting: " +key);
-        delete $scope.selectedLocations[key];
+        delete $scope.model.selectedLocations[key];
     };
 
     var format = function(selectedLocation) {
         var viewValue = {
                     name: "",
                     address: null
-
         };
 
         if (angular.isString(selectedLocation)) {
@@ -227,97 +232,38 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, shareMapService, 
         } else if (angular.isObject(selectedLocation)) {
             viewValue.address = selectedLocation.formatted_address;
             viewValue.name = selectedLocation.name ;
-
             console.log("Selected name ane add: "+viewValue.name + " " +viewValue.address);
         }
-
         return viewValue;
+    };
+
+
+    $scope.reset = function(){
+        $scope.model.selectedLocations={};
+        $scope.model.selectedIdeas={};
+        $scope.model.selectedDate
+        $scope.model.selectedDate = $scope.model.dateOptions[2].from;
+        $scope.model.selectedStartTime = null;
+        $scope.model.fromDate = dateInfoService.getTodayStr();
+        $scope.model.toDate = dateInfoService.getTodayStr();
+    }
+
+
+    //Date functions
+    $scope.changeToDate = function(date){
+        $scope.model.toDate = date;
+    };
+
+
+    //doCreateEventIdea
+    $scope.doCreateEventIdea = function(model){
+
+        console.log(model);
+
     }
 
 });
 
-
-
-
-app.controller('DateUtilCtrl', function($scope, $filter ) {
-
-     $scope.changeToDate = function(date){
-        $scope.toDate = date;
-     };
-
-     var dateToString = function(date) {
-         return $filter('date')(date, "yyyy-MM-dd");
-     };
-
-    /**
-     * Getting the date of coming weekend's date
-     *
-     * @param date
-     * @param dayB4EndOfWeek - int; Friday is 2, Sat is 1, Sun is 0
-     * @param noOfNextWeek - this coming week is 1, next week is 2
-     * @returns {*}
-     */
-     var getNext = function(date, dayB4EndOfWeek, noOfNextWeek) {
-        var normalizedDay = (date.getDay() + dayB4EndOfWeek) % 7;
-        var daysForward = (7 * noOfNextWeek ) - normalizedDay;
-        return dateToString(new Date(+date + (daysForward * 86400000)));
-     };
-
-
-
-
-     var today = new Date();
-     $scope.todayAsStr = dateToString(today);
-     $scope.tomorrowAsStr = dateToString(new Date().setDate(today.getDate() + 1));
-     $scope.nextYearAsStr = dateToString(new Date(today.getFullYear()+1, today.getMonth(), today.getDate()));
-     $scope.thisFriAsStr = getNext(today, 2, 1);
-     $scope.thisSatAsStr = getNext(today, 1, 1);
-     $scope.thisSunAsStr = getNext(today, 0, 1);
-     $scope.nextFriAsStr = getNext(today, 2, 2);
-     $scope.nextSatAsStr = getNext(today, 1, 2);
-     $scope.nextSunAsStr = getNext(today, 0, 2);
-
-    console.log("today", $scope.todayAsStr);
-    console.log("tomorrow",$scope.tomorrowAsStr);
-    console.log("nextYear",$scope.nextYearAsStr);
-    console.log("thisFri",$scope.thisFriAsStr);
-    console.log("thisSat",$scope.thisSatAsStr);
-    console.log("thisSun",$scope.thisSunAsStr);
-    console.log("nextFri",$scope.nextFriAsStr);
-    console.log("nextSat",$scope.nextSatAsStr);
-    console.log("nextSun",$scope.nextSunAsStr);
-
-    //TODO: show your friend's birthday within 30 days
-    //TODO: show holiday within next 30 days
-    $scope.dateOptions = [
-      {name:"Any date",     from:"0", to:"0"},
-      {name:"Today",        from:$scope.todayAsStr, to:""},
-      {name:"Tomorrow",     from:$scope.tomorrowAsStr , to:""},
-      {name:"This Fri",     from:$scope.thisFriAsStr , to:""},
-      {name:"This Sat",     from:$scope.thisSatAsStr , to:""},
-      {name:"This Sun",     from:$scope.thisSunAsStr , to:""},
-      {name:"This Weekend", from:$scope.thisSatAsStr , to:$scope.thisSunAsStr},
-      {name:"Next Fri",     from:$scope.nextFriAsStr , to:""},
-      {name:"Next Sat",     from:$scope.nextSatAsStr , to:""},
-      {name:"Next Sun",     from:$scope.nextSunAsStr , to:""},
-      {name:"Next Weekend", from:$scope.nextSatAsStr , to:$scope.nextSunAsStr},
-      {name:"Pick A Date",  from:null , to:null}
-    ];
-
-    $scope.selectedDate = $scope.dateOptions[2].from;
-
-
-
-
-
-    $scope.selectedStartTime = null;
-    $scope.fromDate = $scope.todayAsStr;
-    $scope.toDate = $scope.todayAsStr;
-
-
-
-
-});
 
 
 app.controller('PlaylistsCtrl', function($scope) {
@@ -366,290 +312,5 @@ app.controller('IdeaTypeaheadCtrl', function($scope, $http, ideaTypeaheadService
         window.alert('You have clearing ' + $scope.selectedIdeaObj);
         $scope.selectedIdeaObj = {};
     };
-
-});
-
-app.controller('IdeaTypeaheadCtrl2', function($scope, $http, ideaTypeaheadService, shareMapService){
-
-    $scope.remoteUrlRequestFn = function(str) {
-      return {q: str};
-    };
-
-    $scope.countrySelected = function(selected) {
-      window.alert('You have selected ' + selected.title);
-    };
-
-    $scope.people = [
-      {firstName: "Daryl", surname: "Rowland", twitter: "@darylrowland", pic: "img/daryl.jpeg"},
-      {firstName: "Alan", surname: "Partridge", twitter: "@alangpartridge", pic: "img/alanp.jpg"},
-      {firstName: "Annie", surname: "Rowland", twitter: "@anklesannie", pic: "img/annie.jpg"}
-    ];
-
-    $scope.countries = [
-      {name: 'Afghanistan', code: 'AF'},
-      {name: 'Aland Islands', code: 'AX'},
-      {name: 'Albania', code: 'AL'},
-      {name: 'Algeria', code: 'DZ'},
-      {name: 'American Samoa', code: 'AS'},
-      {name: 'AndorrA', code: 'AD'},
-      {name: 'Angola', code: 'AO'},
-      {name: 'Anguilla', code: 'AI'},
-      {name: 'Antarctica', code: 'AQ'},
-      {name: 'Antigua and Barbuda', code: 'AG'},
-      {name: 'Argentina', code: 'AR'},
-      {name: 'Armenia', code: 'AM'},
-      {name: 'Aruba', code: 'AW'},
-      {name: 'Australia', code: 'AU'},
-      {name: 'Austria', code: 'AT'},
-      {name: 'Azerbaijan', code: 'AZ'},
-      {name: 'Bahamas', code: 'BS'},
-      {name: 'Bahrain', code: 'BH'},
-      {name: 'Bangladesh', code: 'BD'},
-      {name: 'Barbados', code: 'BB'},
-      {name: 'Belarus', code: 'BY'},
-      {name: 'Belgium', code: 'BE'},
-      {name: 'Belize', code: 'BZ'},
-      {name: 'Benin', code: 'BJ'},
-      {name: 'Bermuda', code: 'BM'},
-      {name: 'Bhutan', code: 'BT'},
-      {name: 'Bolivia', code: 'BO'},
-      {name: 'Bosnia and Herzegovina', code: 'BA'},
-      {name: 'Botswana', code: 'BW'},
-      {name: 'Bouvet Island', code: 'BV'},
-      {name: 'Brazil', code: 'BR'},
-      {name: 'British Indian Ocean Territory', code: 'IO'},
-      {name: 'Brunei Darussalam', code: 'BN'},
-      {name: 'Bulgaria', code: 'BG'},
-      {name: 'Burkina Faso', code: 'BF'},
-      {name: 'Burundi', code: 'BI'},
-      {name: 'Cambodia', code: 'KH'},
-      {name: 'Cameroon', code: 'CM'},
-      {name: 'Canada', code: 'CA'},
-      {name: 'Cape Verde', code: 'CV'},
-      {name: 'Cayman Islands', code: 'KY'},
-      {name: 'Central African Republic', code: 'CF'},
-      {name: 'Chad', code: 'TD'},
-      {name: 'Chile', code: 'CL'},
-      {name: 'China', code: 'CN'},
-      {name: 'Christmas Island', code: 'CX'},
-      {name: 'Cocos (Keeling) Islands', code: 'CC'},
-      {name: 'Colombia', code: 'CO'},
-      {name: 'Comoros', code: 'KM'},
-      {name: 'Congo', code: 'CG'},
-      {name: 'Congo, The Democratic Republic of the', code: 'CD'},
-      {name: 'Cook Islands', code: 'CK'},
-      {name: 'Costa Rica', code: 'CR'},
-      {name: 'Cote D\'Ivoire', code: 'CI'},
-      {name: 'Croatia', code: 'HR'},
-      {name: 'Cuba', code: 'CU'},
-      {name: 'Cyprus', code: 'CY'},
-      {name: 'Czech Republic', code: 'CZ'},
-      {name: 'Denmark', code: 'DK'},
-      {name: 'Djibouti', code: 'DJ'},
-      {name: 'Dominica', code: 'DM'},
-      {name: 'Dominican Republic', code: 'DO'},
-      {name: 'Ecuador', code: 'EC'},
-      {name: 'Egypt', code: 'EG'},
-      {name: 'El Salvador', code: 'SV'},
-      {name: 'Equatorial Guinea', code: 'GQ'},
-      {name: 'Eritrea', code: 'ER'},
-      {name: 'Estonia', code: 'EE'},
-      {name: 'Ethiopia', code: 'ET'},
-      {name: 'Falkland Islands (Malvinas)', code: 'FK'},
-      {name: 'Faroe Islands', code: 'FO'},
-      {name: 'Fiji', code: 'FJ'},
-      {name: 'Finland', code: 'FI'},
-      {name: 'France', code: 'FR'},
-      {name: 'French Guiana', code: 'GF'},
-      {name: 'French Polynesia', code: 'PF'},
-      {name: 'French Southern Territories', code: 'TF'},
-      {name: 'Gabon', code: 'GA'},
-      {name: 'Gambia', code: 'GM'},
-      {name: 'Georgia', code: 'GE'},
-      {name: 'Germany', code: 'DE'},
-      {name: 'Ghana', code: 'GH'},
-      {name: 'Gibraltar', code: 'GI'},
-      {name: 'Greece', code: 'GR'},
-      {name: 'Greenland', code: 'GL'},
-      {name: 'Grenada', code: 'GD'},
-      {name: 'Guadeloupe', code: 'GP'},
-      {name: 'Guam', code: 'GU'},
-      {name: 'Guatemala', code: 'GT'},
-      {name: 'Guernsey', code: 'GG'},
-      {name: 'Guinea', code: 'GN'},
-      {name: 'Guinea-Bissau', code: 'GW'},
-      {name: 'Guyana', code: 'GY'},
-      {name: 'Haiti', code: 'HT'},
-      {name: 'Heard Island and Mcdonald Islands', code: 'HM'},
-      {name: 'Holy See (Vatican City State)', code: 'VA'},
-      {name: 'Honduras', code: 'HN'},
-      {name: 'Hong Kong', code: 'HK'},
-      {name: 'Hungary', code: 'HU'},
-      {name: 'Iceland', code: 'IS'},
-      {name: 'India', code: 'IN'},
-      {name: 'Indonesia', code: 'ID'},
-      {name: 'Iran, Islamic Republic Of', code: 'IR'},
-      {name: 'Iraq', code: 'IQ'},
-      {name: 'Ireland', code: 'IE'},
-      {name: 'Isle of Man', code: 'IM'},
-      {name: 'Israel', code: 'IL'},
-      {name: 'Italy', code: 'IT'},
-      {name: 'Jamaica', code: 'JM'},
-      {name: 'Japan', code: 'JP'},
-      {name: 'Jersey', code: 'JE'},
-      {name: 'Jordan', code: 'JO'},
-      {name: 'Kazakhstan', code: 'KZ'},
-      {name: 'Kenya', code: 'KE'},
-      {name: 'Kiribati', code: 'KI'},
-      {name: 'Korea, Democratic People\'S Republic of', code: 'KP'},
-      {name: 'Korea, Republic of', code: 'KR'},
-      {name: 'Kuwait', code: 'KW'},
-      {name: 'Kyrgyzstan', code: 'KG'},
-      {name: 'Lao People\'S Democratic Republic', code: 'LA'},
-      {name: 'Latvia', code: 'LV'},
-      {name: 'Lebanon', code: 'LB'},
-      {name: 'Lesotho', code: 'LS'},
-      {name: 'Liberia', code: 'LR'},
-      {name: 'Libyan Arab Jamahiriya', code: 'LY'},
-      {name: 'Liechtenstein', code: 'LI'},
-      {name: 'Lithuania', code: 'LT'},
-      {name: 'Luxembourg', code: 'LU'},
-      {name: 'Macao', code: 'MO'},
-      {name: 'Macedonia, The Former Yugoslav Republic of', code: 'MK'},
-      {name: 'Madagascar', code: 'MG'},
-      {name: 'Malawi', code: 'MW'},
-      {name: 'Malaysia', code: 'MY'},
-      {name: 'Maldives', code: 'MV'},
-      {name: 'Mali', code: 'ML'},
-      {name: 'Malta', code: 'MT'},
-      {name: 'Marshall Islands', code: 'MH'},
-      {name: 'Martinique', code: 'MQ'},
-      {name: 'Mauritania', code: 'MR'},
-      {name: 'Mauritius', code: 'MU'},
-      {name: 'Mayotte', code: 'YT'},
-      {name: 'Mexico', code: 'MX'},
-      {name: 'Micronesia, Federated States of', code: 'FM'},
-      {name: 'Moldova, Republic of', code: 'MD'},
-      {name: 'Monaco', code: 'MC'},
-      {name: 'Mongolia', code: 'MN'},
-      {name: 'Montserrat', code: 'MS'},
-      {name: 'Morocco', code: 'MA'},
-      {name: 'Mozambique', code: 'MZ'},
-      {name: 'Myanmar', code: 'MM'},
-      {name: 'Namibia', code: 'NA'},
-      {name: 'Nauru', code: 'NR'},
-      {name: 'Nepal', code: 'NP'},
-      {name: 'Netherlands', code: 'NL'},
-      {name: 'Netherlands Antilles', code: 'AN'},
-      {name: 'New Caledonia', code: 'NC'},
-      {name: 'New Zealand', code: 'NZ'},
-      {name: 'Nicaragua', code: 'NI'},
-      {name: 'Niger', code: 'NE'},
-      {name: 'Nigeria', code: 'NG'},
-      {name: 'Niue', code: 'NU'},
-      {name: 'Norfolk Island', code: 'NF'},
-      {name: 'Northern Mariana Islands', code: 'MP'},
-      {name: 'Norway', code: 'NO'},
-      {name: 'Oman', code: 'OM'},
-      {name: 'Pakistan', code: 'PK'},
-      {name: 'Palau', code: 'PW'},
-      {name: 'Palestinian Territory, Occupied', code: 'PS'},
-      {name: 'Panama', code: 'PA'},
-      {name: 'Papua New Guinea', code: 'PG'},
-      {name: 'Paraguay', code: 'PY'},
-      {name: 'Peru', code: 'PE'},
-      {name: 'Philippines', code: 'PH'},
-      {name: 'Pitcairn', code: 'PN'},
-      {name: 'Poland', code: 'PL'},
-      {name: 'Portugal', code: 'PT'},
-      {name: 'Puerto Rico', code: 'PR'},
-      {name: 'Qatar', code: 'QA'},
-      {name: 'Reunion', code: 'RE'},
-      {name: 'Romania', code: 'RO'},
-      {name: 'Russian Federation', code: 'RU'},
-      {name: 'RWANDA', code: 'RW'},
-      {name: 'Saint Helena', code: 'SH'},
-      {name: 'Saint Kitts and Nevis', code: 'KN'},
-      {name: 'Saint Lucia', code: 'LC'},
-      {name: 'Saint Pierre and Miquelon', code: 'PM'},
-      {name: 'Saint Vincent and the Grenadines', code: 'VC'},
-      {name: 'Samoa', code: 'WS'},
-      {name: 'San Marino', code: 'SM'},
-      {name: 'Sao Tome and Principe', code: 'ST'},
-      {name: 'Saudi Arabia', code: 'SA'},
-      {name: 'Senegal', code: 'SN'},
-      {name: 'Serbia and Montenegro', code: 'CS'},
-      {name: 'Seychelles', code: 'SC'},
-      {name: 'Sierra Leone', code: 'SL'},
-      {name: 'Singapore', code: 'SG'},
-      {name: 'Slovakia', code: 'SK'},
-      {name: 'Slovenia', code: 'SI'},
-      {name: 'Solomon Islands', code: 'SB'},
-      {name: 'Somalia', code: 'SO'},
-      {name: 'South Africa', code: 'ZA'},
-      {name: 'South Georgia and the South Sandwich Islands', code: 'GS'},
-      {name: 'Spain', code: 'ES'},
-      {name: 'Sri Lanka', code: 'LK'},
-      {name: 'Sudan', code: 'SD'},
-      {name: 'Suriname', code: 'SR'},
-      {name: 'Svalbard and Jan Mayen', code: 'SJ'},
-      {name: 'Swaziland', code: 'SZ'},
-      {name: 'Sweden', code: 'SE'},
-      {name: 'Switzerland', code: 'CH'},
-      {name: 'Syrian Arab Republic', code: 'SY'},
-      {name: 'Taiwan, Province of China', code: 'TW'},
-      {name: 'Tajikistan', code: 'TJ'},
-      {name: 'Tanzania, United Republic of', code: 'TZ'},
-      {name: 'Thailand', code: 'TH'},
-      {name: 'Timor-Leste', code: 'TL'},
-      {name: 'Togo', code: 'TG'},
-      {name: 'Tokelau', code: 'TK'},
-      {name: 'Tonga', code: 'TO'},
-      {name: 'Trinidad and Tobago', code: 'TT'},
-      {name: 'Tunisia', code: 'TN'},
-      {name: 'Turkey', code: 'TR'},
-      {name: 'Turkmenistan', code: 'TM'},
-      {name: 'Turks and Caicos Islands', code: 'TC'},
-      {name: 'Tuvalu', code: 'TV'},
-      {name: 'Uganda', code: 'UG'},
-      {name: 'Ukraine', code: 'UA'},
-      {name: 'United Arab Emirates', code: 'AE'},
-      {name: 'United Kingdom', code: 'GB'},
-      {name: 'United States', code: 'US'},
-      {name: 'United States Minor Outlying Islands', code: 'UM'},
-      {name: 'Uruguay', code: 'UY'},
-      {name: 'Uzbekistan', code: 'UZ'},
-      {name: 'Vanuatu', code: 'VU'},
-      {name: 'Venezuela', code: 'VE'},
-      {name: 'Vietnam', code: 'VN'},
-      {name: 'Virgin Islands, British', code: 'VG'},
-      {name: 'Virgin Islands, U.S.', code: 'VI'},
-      {name: 'Wallis and Futuna', code: 'WF'},
-      {name: 'Western Sahara', code: 'EH'},
-      {name: 'Yemen', code: 'YE'},
-      {name: 'Zambia', code: 'ZM'},
-      {name: 'Zimbabwe', code: 'ZW'}
-    ];
-
-    $scope.countrySelected9 = {title: 'Chile'};
-
-    $scope.inputChanged = function(str) {
-      $scope.console10 = str;
-    }
-
-    $scope.focusState = 'None';
-    $scope.focusIn = function() {
-      var focusInputElem = document.getElementById('ex12_value');
-      $scope.focusState = 'In';
-      focusInputElem.classList.remove('small-input');
-    }
-    $scope.focusOut = function() {
-      var focusInputElem = document.getElementById('ex12_value');
-      $scope.focusState = 'Out';
-      focusInputElem.classList.add('small-input');
-    }
-
-    $scope.disableInput = true;
-
 
 });

@@ -4,30 +4,29 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
 
+    <form name="eventIdeaForm" ng-submit="doCreateEventIdea(model)" >
 
 
-    <!--<form name="joinForm" ng-submit="doJoin(model)" >-->
+
+        <ion-nav-buttons side="right">
+            <button class="button button-clear" ng-click="reset(); ">Reset</button>
+        </ion-nav-buttons>
+
+
     <ion-content class="has-header" >
 
-
-    <!--
-        LOCATION
-    -->
-        <div class="item item-divider item-button-right">
-            Where? <small> ( optional )</small>
-            <button class="button button-small button-icon custom-button-icon-small" ng-click="locationData.showDelete = !locationData.showDelete" ng-disabled="isEmpty(selectedLocations)">
+    <!-- LOCATION -->
+        <div class="item item-divider item-button-right">Where? <small> ( optional )</small>
+            <button class="button button-small button-icon custom-button-icon-small" ng-click="locationData.showDelete = !locationData.showDelete" ng-disabled="isEmpty(model.selectedLocations)">
                 <i class="icon ion-minus-circled"></i>
             </button>
         </div>
         <div class="g-places-autocomplete-01 suggest-box google-place-box">
-            <!--<label class="item item-input ">-->
-                <!--selected-call : after an option is selected then call the function doAddLocation   ng-click="selectedLocation = null"-->
-                <input type="text" g-places-autocomplete ng-model="selectedLocation"  selected-call="doAddLocation"   placeholder="find a location" force-selection="false" ng-disabled="getSize(selectedLocations)>=5"/>
-            <!--</label>-->
+            <!--selected-call : after an option is selected then call the function doAddLocation   ng-click="selectedLocation = null"-->
+            <input type="text" g-places-autocomplete ng-model="selectedLocation"  selected-call="doAddLocation"   placeholder="find a location" force-selection="false" ng-disabled="getSize(model.selectedLocations)>=5"/>
         </div>
         <ion-list show-delete="locationData.showDelete" can-swipe="true">
-            <ion-item ng-repeat="(key,value) in selectedLocations">
-                {{key}} <p><small>{{value}}</small></p>
+            <ion-item ng-repeat="(key,value) in model.selectedLocations">{{key}} <lable class="light-text"><small>{{value}}</small></lable>
                 <ion-delete-button class="ion-minus-circled" ng-click="doDeleteLocation(key)"></ion-delete-button>
                 <ion-option-button class="ion-minus-circled" ng-click="doDeleteLocation(key)">Delete</ion-option-button>
                 <ion-option-button class="ion-edit" ng-click="openEditLocationItemModal(key)">Edit</ion-option-button>
@@ -36,28 +35,21 @@
         <!--For output testing the selected location data -->
         <!--<pre>{{selectedLocation | json}}</pre>-->
 
-        <!--test:{{selectedLocation}}-->
-
-    <!--
-        IDEAS
-    -->
-        <div class="item item-divider item-button-right">
-            What? <small> ( optional )</small>
-            <button class="button button-small button-icon custom-button-icon-small" ng-click="data.showDelete = !data.showDelete" ng-disabled="isEmpty(selectedIdeas)">
+    <!-- IDEAS -->
+        <div class="item item-divider item-button-right">What? <small> ( optional )</small>
+            <button class="button button-small button-icon custom-button-icon-small" ng-click="data.showDelete = !data.showDelete" ng-disabled="isEmpty(model.selectedIdeas)">
                 <i class="icon ion-minus-circled"></i>
             </button>
         </div>
         <div ng-controller="IdeaTypeaheadCtrl" class="suggest-box">
-
              <angucomplete-alt id="ex1" placeholder="type to see suggestions" pause="100" selected-object="doAddIdea"
                     local-data="ideas" search-fields="name" title-field="name" minlength="1" input-class="form-control"
                     match-class="highlight" override-suggestions="true" clear-selected="true"
-                    disable-input="getSize(selectedIdeas)>=5">
+                    disable-input="getSize(model.selectedIdeas)>=5">
              </angucomplete-alt>
         </div>
-
         <ion-list show-delete="data.showDelete" can-swipe="true">
-            <ion-item ng-repeat="(key,value) in selectedIdeas">
+            <ion-item ng-repeat="(key,value) in model.selectedIdeas">
                 {{key}}
                 <ion-delete-button class="ion-minus-circled" ng-click="doDeleteIdea(key)"></ion-delete-button>
                 <ion-option-button class="ion-minus-circled" ng-click="doDeleteIdea(key)">Delete</ion-option-button>
@@ -65,54 +57,39 @@
             </ion-item>
         </ion-list>
 
-
-
-
+    <!-- WHEN -->
         <div class="item item-divider">When?</div>
-
-        <div ng-controller="DateUtilCtrl" >
-
             <div class="item item-input item-select ">
                 <div class="input-label">Date:</div>
-                <select ng-model="selectedDate" ng-options="dateOption.from as dateOption.name for dateOption in dateOptions"></select>
+                <select ng-model="model.selectedDate" ng-options="dateOption.from as dateOption.name for dateOption in model.dateOptions"></select>
             </div>
 
-            <label class="item item-input item-select" ng-show="selectedDate===null">
+            <label class="item item-input item-select" ng-show="model.selectedDate===null">
                 <span class="input-label">from</span>
-                <input type="date" min="{{todayAsStr}}" max="{{nextYearAsStr}}" ng-model="fromDate"  ng-change="changeToDate(fromDate)">
+                <input type="date" min="{{model.str_today}}" max="{{model.str_nextYear}}" ng-model="model.fromDate"  ng-change="changeToDate(model.fromDate)">
             </label>
 
-            <label class="item item-input item-select" ng-show="selectedDate===null">
+            <label class="item item-input item-select" ng-show="model.selectedDate===null">
                 <span class="input-label">to</span>
-                <input type="date" min=" {{fromDate!=null ? fromDate : todayAsStr}}" max="{{nextYearAsStr}}" ng-model="toDate">
+                <input type="date" min=" {{model.fromDate!=null ? model.fromDate : model.str_today}}" max="{{model.str_nextYear}}" ng-model="model.toDate">
             </label>
 
             <div class="item item-input item-select">
                 <div class="input-label">Start Time:</div>
-                <input type="time" ng-model="selectedStartTime"/>
+                <input type="time" ng-model="model.selectedStartTime"/>
             </div>
 
 
-            <label class="item item-input" ng-show="selectedStartTime!=null">
+            <label class="item item-input" ng-show="model.selectedStartTime!=null">
                 <div class="input-label">End Time:</div>
-                <input type="time" ng-model="selectedEndTime"/>
+                <input type="time" ng-model="model.selectedEndTime"/>
             </label>
-
-
-        </div>
-
-
-
-
-
-
-
 
     </ion-content>
     <ion-footer-bar>
         <div class="button-bar" >
-            <button class="button button-positive" type="submit" ng-disabled="joinForm.$invalid">Save</button>
+            <button class="button button-positive" type="submit" ng-disabled="eventIdeaForm.$invalid">Save</button>
         </div>
     </ion-footer-bar>
-    <!--</form>-->
+    </form>
 </ion-view>

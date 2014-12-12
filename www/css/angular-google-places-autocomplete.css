@@ -105,3 +105,8 @@
 .custom-prediction-label {
     font-style: italic;
 }
+
+.light-text {
+	color: gray;
+	font-size:5;
+}

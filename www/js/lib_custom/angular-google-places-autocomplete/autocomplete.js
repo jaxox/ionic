@@ -339,18 +339,6 @@ angular.module('google.places', [])
 
 
     .directive('gPlacesAutocompleteDrawer', ['$window', '$document', function ($window, $document) {
-//working
-//        var TEMPLATE = [
-//            '<div class="pac-container" ng-if="isOpen()" ng-style="{top: position.top+\'px\', left: 15+\'px\', width: position.width+\'px\'}" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">',
-//            '  <div class="pac-item" g-places-autocomplete-prediction index="$index" prediction="prediction" query="query"',
-//            '       ng-repeat="prediction in predictions track by $index" ng-class="{\'pac-item-selected\': isActive($index) }"',
-//            '       ng-mouseenter="selectActive($index)" ng-click="selectPrediction($index)" role="option" id="{{prediction.id}}">',
-//            '  </div>',
-//            '</div>'
-//        ];
-
-
-//testing
         var TEMPLATE = [
             '<div class="pac-container" ng-if="isOpen()" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">',
             '  <div class="pac-item" g-places-autocomplete-prediction index="$index" prediction="prediction" query="query"',

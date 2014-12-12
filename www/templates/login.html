@@ -5,8 +5,9 @@
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
     </div>
   </ion-header-bar>
+  <form name="loginForm" ng-submit="doLogin()">
   <ion-content>
-    <form name="loginForm" ng-submit="doLogin()">
+
       <div class="list">
 
         <label class="item item-input">
@@ -28,18 +29,15 @@
           <small ng-show="loginForm.password.$error.minlength"> Your password is required to be at least 5 characters</small>
           <small ng-show="loginForm.password.$error.maxlength"> Your password cannot be longer than 20 characters </small>
         </div>
-
-
-
-
-        <label class="item">
-          <button class="button button-block button-positive" type="submit" ng-disabled="loginForm.$invalid">Log in</button>
-        </label>
       </div>
-    </form>
-    <label class="item">
-        <button class="button button-block button-positive" ng-click="join()">Join for FREE!</button>
-    </label>
+
   </ion-content>
+  <ion-footer-bar>
+    <div class="button-bar" >
+      <button class="button button-positive" type="submit" ng-disabled="loginForm.$invalid">Log in</button>
+      <button class="button  button-positive" ng-click="join()">Join for FREE!</button>
+    </div>
+  </ion-footer-bar>
+  </form>
 </div>
 
