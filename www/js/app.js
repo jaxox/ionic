@@ -45,32 +45,32 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages
         }
     })
 
-    .state('app.search', {
-      url: "/search",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/search.html"
-        }
-      }
-    })
+//    .state('app.search', {
+//      url: "/search",
+//      views: {
+//        'menuContent' :{
+//          templateUrl: "templates/search.html"
+//        }
+//      }
+//    })
 
-    .state('app.browse', {
-      url: "/browse",
+    .state('app.whoIsFree', {
+      url: "/whoIsFree",
       views: {
         'menuContent' :{
-          templateUrl: "templates/browse.html"
+          templateUrl: "templates/whoIsFree/whoIsFree.html"
         }
       }
     })
-    .state('app.playlists', {
-      url: "/playlists",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/playlists.html",
-          controller: 'PlaylistsCtrl'
-        }
-      }
-    })
+//    .state('app.playlists', {
+//      url: "/playlists",
+//      views: {
+//        'menuContent' :{
+//          templateUrl: "templates/playlists.html",
+//          controller: 'PlaylistsCtrl'
+//        }
+//      }
+//    })
 
     .state('app.single', {
       url: "/playlists/:playlistId",
@@ -82,7 +82,7 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages
       }
     });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/browse');
+  $urlRouterProvider.otherwise('/app/whoIsFree');
 });
 
 

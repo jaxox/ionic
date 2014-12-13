@@ -121,6 +121,8 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
          $scope.model.toDate = dateInfoService.getTodayStr();
     });
 
+    $scope.model.timeOptions  = dateInfoService.getTimeOptions("...");
+    $scope.model.selectedTime = $scope.model.timeOptions[0].from;
 
 //[MODAL]
     // Create the edit idea item's modal
@@ -246,6 +248,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
         $scope.model.selectedStartTime = null;
         $scope.model.fromDate = dateInfoService.getTodayStr();
         $scope.model.toDate = dateInfoService.getTodayStr();
+        $scope.model.selectedTime = $scope.model.timeOptions[0].from;
     }
 
 

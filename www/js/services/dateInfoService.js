@@ -40,6 +40,18 @@ app.factory('dateInfoService', function($http, $q, $timeout, $filter ){
         return nextYearStr;
      }
 
+     dateInfoService.getTimeOptions = function(query) {
+              var dateOptions = [
+                {name:"Anytime",    from:"anytime",  to:""},
+                {name:"Morning",    from:"morning",  to:""},
+                {name:"Afternoon",  from:"afternoon",to:""},
+                {name:"Evening",    from:"evening",  to:""},
+                {name:"Night",      from:"night",    to:""},
+                {name:"Pick A Time",from:null , to:null}
+              ];
+              return dateOptions;
+     }
+
      dateInfoService.getDateOptions = function(query) {
 
         var data = $q.defer();

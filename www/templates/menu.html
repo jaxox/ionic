@@ -18,11 +18,19 @@
         <ion-item nav-clear menu-close ng-click="login()" ng-hide="loginUser">Login</ion-item>
         <ion-item nav-clear menu-close ng-click="join()" ng-hide="loginUser">Join</ion-item>
 
-        <ion-item nav-clear menu-close href="#/app/eventIdea">Let's Meet</ion-item>
+        <ion-item nav-clear menu-close href="#/app/eventIdea" class="item item-icon-right">Let's Meet
+          <i class="icon ion-coffee"></i>
+        </ion-item>
 
-        <ion-item nav-clear menu-close href="#/app/search">Search</ion-item>
-        <ion-item nav-clear menu-close href="#/app/browse">Browse</ion-item>
-        <ion-item nav-clear menu-close href="#/app/playlists">Playlists</ion-item>
+        <!--<ion-item nav-clear menu-close href="#/app/search" class="item item-icon-right">Who is free?-->
+          <!--<i class="icon ion-help-circled"></i>-->
+        <!--</ion-item>-->
+
+
+        <ion-item nav-clear menu-close href="#/app/whoIsFree" class="item item-icon-right">Who is free?
+          <i class="icon ion-help-circled"></i>
+        </ion-item>
+        <!--<ion-item nav-clear menu-close href="#/app/playlists">Playlists</ion-item>-->
 
         <!--show logout if user is logged in-->
         <ion-item nav-clear menu-close ng-click="logout()" ng-show="loginUser">Logout</ion-item>
