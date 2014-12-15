@@ -123,7 +123,8 @@ angular.module('google.places', [])
                             $scope.$apply(function () {
                                 $scope.selected = $scope.active;
 
-                                if ($scope.selected === -1) {
+                                //if it is not a force selection (free text) && string is not empty
+                                if ($scope.selected === -1 && element.val() ) {
                                     clearPredictions();
                                     //adding custom test to the address
                                     $scope.selectedFunc(controller.$viewValue);

@@ -35,12 +35,12 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages
       controller: 'AppCtrl'
     })
 
-    .state('app.eventIdea', {
-        url: "/eventIdea",
+    .state('app.socialIdea', {
+        url: "/socialIdea",
         views: {
             'menuContent' :{
-                templateUrl: "templates/eventIdea/eventIdea.html",
-                controller: 'EventIdeaCtrl'
+                templateUrl: "templates/socialIdea/socialIdea.html",
+                controller: 'SocialIdeaCtrl'
             }
         }
     })

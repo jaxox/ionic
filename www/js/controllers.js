@@ -95,11 +95,9 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, loginService, 
     });
 
 
-app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, $cordovaToast) {
+app.controller('SocialIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, $cordovaToast ,socialIdeaService, Restangular) {
 
     // data for the Event Idea modal
-    $scope.model.selectedIdeas = {};
-    $scope.model.selectedLocations = {};
     $scope.model.selectedDate = {};
     $scope.data = { showDelete: false};
     $scope.origEditKey = {};
@@ -107,8 +105,11 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
     $scope.model.dateOptions = {};
     $scope.model.str_today = {};
     $scope.model.str_nextYear = {};
+
     $scope.model.fromDate = {};
     $scope.model.toDate = {};
+    $scope.model.ideas = {};
+    $scope.model.locations = {};
 
 
     var $promise  = dateInfoService.getDateOptions("...");
@@ -126,7 +127,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
 
 //[MODAL]
     // Create the edit idea item's modal
-    $ionicModal.fromTemplateUrl('templates/eventIdea/editIdeaItemModal.html', {
+    $ionicModal.fromTemplateUrl('templates/socialIdea/editIdeaItemModal.html', {
         scope: $scope
     }).then(function(modal) {
             $scope.editIdeaItemModal = modal;
@@ -159,19 +160,19 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
         // JUST SAVING THOSE FOR EXAMPLE LATER
         // console.log('adding the new idea', shareMapService.get('newIdea'));
         //$scope.ideas.push({name: shareMapService.get('newIdea')});
-        if( $scope.getSize( $scope.model.selectedIdeas) >=5){
+        if( $scope.getSize( $scope.model.ideas) >=5){
             return;
         }
         var origObj = (angular.isString(selectedIdea)) ? selectedIdea : selectedIdea.originalObject;
         var ideaName = (angular.isString(origObj)) ?  origObj :   origObj.name;
 
-        if(ideaName in $scope.model.selectedIdeas){
+        if(ideaName in $scope.model.ideas){
             $cordovaToast.showLongBottom(ideaName + ' is already added ');
         }else{
-            $scope.model.selectedIdeas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
+            $scope.model.ideas[ideaName] = (angular.isString(origObj)) ? "undefined": origObj.code  ;
             console.log('adding the new idea', origObj);
 
-            if( $scope.getSize( $scope.model.selectedIdeas) >= 5){
+            if( $scope.getSize( $scope.model.ideas) >= 5){
                 $cordovaToast.showLongBottom('Reached the maximum 5 ideas ');
             }
         }
@@ -179,7 +180,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
 
     $scope.doDeleteIdea = function (key){
         console.log("deleting: " +key);
-        delete $scope.model.selectedIdeas[key];
+        delete $scope.model.ideas[key];
     };
 
 
@@ -197,7 +198,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
     //Location
     $scope.doAddLocation = function(selectedLocation) {
 
-        if( $scope.getSize( $scope.model.selectedLocations) >=5){
+        if( $scope.getSize( $scope.model.locations) >=5){
             return;
         }
 
@@ -205,13 +206,13 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
 
         var formattedResult = format(selectedLocation);
 
-        if(formattedResult.name in $scope.model.selectedLocations){
+        if(formattedResult.name in $scope.model.locations){
             $cordovaToast.showLongBottom(formattedResult.name + ' is already added ');
         }else{
-            $scope.model.selectedLocations[formattedResult.name] = formattedResult.address  ;
+            $scope.model.locations[formattedResult.name] = formattedResult.address  ;
             console.log('adding the new address', formattedResult);
 
-            if( $scope.getSize( $scope.model.selectedLocations) >= 5){
+            if( $scope.getSize( $scope.model.locations) >= 5){
                 $cordovaToast.showLongBottom('Reached the maximum 5 addresses ');
             }
         }
@@ -220,7 +221,7 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
 
     $scope.doDeleteLocation = function (key){
         console.log("deleting: " +key);
-        delete $scope.model.selectedLocations[key];
+        delete $scope.model.locations[key];
     };
 
     var format = function(selectedLocation) {
@@ -241,11 +242,12 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
 
 
     $scope.reset = function(){
-        $scope.model.selectedLocations={};
-        $scope.model.selectedIdeas={};
+        $scope.model.locations={};
+        $scope.model.ideas={};
         $scope.model.selectedDate
         $scope.model.selectedDate = $scope.model.dateOptions[2].from;
-        $scope.model.selectedStartTime = null;
+        $scope.model.startTime = {};
+        $scope.model.endTime = {};
         $scope.model.fromDate = dateInfoService.getTodayStr();
         $scope.model.toDate = dateInfoService.getTodayStr();
         $scope.model.selectedTime = $scope.model.timeOptions[0].from;
@@ -258,10 +260,34 @@ app.controller('EventIdeaCtrl', function($scope  ,$ionicModal, dateInfoService, 
     };
 
 
-    //doCreateEventIdea
-    $scope.doCreateEventIdea = function(model){
+    //doCreatesocialIdea
+    $scope.doCreateSocialIdea = function(model){
 
-        console.log(model);
+
+        $scope.loadingShow();
+
+        console.log("saving event idea", model);
+
+        var addPromise = socialIdeaService.add(model,Restangular);
+
+              addPromise.then(function(socialIdea) {
+                console.log("success added" , socialIdea.id);
+                //After successfully added, clean the form data
+                $scope.reset();
+
+                $scope.loadingHide();
+
+                //TODO: i need that and need to save it to somewhere
+                $scope.socialIdea = socialIdea;
+
+                $cordovaToast.showLongBottom('saved successfully.')
+              }, function(response) {
+                console.log("Error with status code", response.status);
+                $scope.loadingHide();
+                $scope.errorMessage = response.data.message;
+                $cordovaToast.showLongBottom('fail to saved:' + response.data.message)
+
+              });
 
     }
 
