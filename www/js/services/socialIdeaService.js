@@ -41,13 +41,26 @@ app.factory('socialIdeaService', function(){
         // startTime: "14:01"
         // endTime: "15:01"
 
-        socialIdea.creatorId = "";
-//	    socialIdea.locations = reqObj.locations;
-//	    socialIdea.ideas = reqObj.ideas;
-//        socialIdea.fromDate = reqObj.fromDate;
-//        socialIdea.toDate = reqObj.toDate;
-//	    socialIdea.startTime = reqObj.startTime;
-//	    socialIdea.endTime = reqObj.endTime;
+        socialIdea.creatorId = reqObj.creatorId;
+	  //  socialIdea.locations = reqObj.locations;
+	    socialIdea.ideas = reqObj.ideas;
+
+        if(reqObj.selectedDate===null){ //Means user is picking specific dates
+            socialIdea.fromDate = reqObj.fromDate;
+            socialIdea.toDate = reqObj.toDate;
+        }else if(reqObj.selectedDate==='anyDate'){ //no need to set dates
+        }else {
+            var res = reqObj.selectedDate.split(":");
+
+
+            socialIdea.fromDate = res[1];
+            if(res.length===3){
+                socialIdea.toDate = res[2];
+            }
+        }
+
+	    socialIdea.startTime = reqObj.startTime;
+	    socialIdea.endTime = reqObj.endTime;
 
         return socialIdea;
     }

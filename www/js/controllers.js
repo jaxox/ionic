@@ -267,8 +267,11 @@ app.controller('SocialIdeaCtrl', function($scope  ,$ionicModal, dateInfoService,
         $scope.loadingShow();
 
         console.log("saving event idea", model);
+        console.log("can we get login user here? " , $scope.loginUser.id);
 
-        var addPromise = socialIdeaService.add(model,Restangular);
+        model.creatorId =  $scope.loginUser.id;
+
+        var addPromise = socialIdeaService.add(model,Restangular );
 
               addPromise.then(function(socialIdea) {
                 console.log("success added" , socialIdea.id);

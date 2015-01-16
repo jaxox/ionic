@@ -74,18 +74,18 @@ app.factory('dateInfoService', function($http, $q, $timeout, $filter ){
         //TODO: show holiday within next 30 days
         //adding text before the from date to prevent duplicate id
          var dateOptions = [
-           {name:"Any date",     from:"anydate:", to:"anydate"},
-           {name:"Today",        from:"today:"+str_today, to:""},
-           {name:"Tomorrow",     from:"tomorrow:"+str_tomorrow , to:""},
-           {name:"This Fri",     from:"fri:"+str_thisFri , to:""},
-           {name:"This Sat",     from:"sat:"+str_thisSat , to:""},
-           {name:"This Sun",     from:"sun:"+str_thisSun , to:""},
-           {name:"This Weekend", from:"weekend:"+str_thisSat , to:str_thisSun},
-           {name:"Next Fri",     from:"nextfri:"+str_nextFri , to:""},
-           {name:"Next Sat",     from:"nextsat:"+str_nextSat , to:""},
-           {name:"Next Sun",     from:"nextsun:"+str_nextSun , to:""},
-           {name:"Next Weekend", from:"nextweekend:"+str_nextSat , to:str_nextSun},
-           {name:"Pick A Date",  from:null , to:null}
+           {name:"Any date",     from: "anyDate"          },
+           {name:"Today",        from: "0:" + str_today   },
+           {name:"Tomorrow",     from: "1:" + str_tomorrow},
+           {name:"This Fri",     from: "2:" + str_thisFri },
+           {name:"This Sat",     from: "3:" + str_thisSat },
+           {name:"This Sun",     from: "4:" + str_thisSun },
+           {name:"This Weekend", from: "5:" + str_thisSat + ":" + str_thisSun},
+           {name:"Next Fri",     from: "6:" + str_nextFri },
+           {name:"Next Sat",     from: "7:" + str_nextSat },
+           {name:"Next Sun",     from: "8:" + str_nextSun },
+           {name:"Next Weekend", from: "9:" + str_nextSat + ":" + str_nextSun},
+           {name:"Pick A Date",  from: null , to:null}
          ];
 
         $timeout(function(){

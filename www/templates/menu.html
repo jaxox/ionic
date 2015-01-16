@@ -18,7 +18,7 @@
         <ion-item nav-clear menu-close ng-click="login()" ng-hide="loginUser">Login</ion-item>
         <ion-item nav-clear menu-close ng-click="join()" ng-hide="loginUser">Join</ion-item>
 
-        <ion-item nav-clear menu-close href="#/app/socialIdea" class="item item-icon-right">Let's Meet
+        <ion-item nav-clear menu-close href="#/app/socialIdea" class="item item-icon-right" ng-show="loginUser">Let's Meet
           <i class="icon ion-coffee"></i>
         </ion-item>
 
@@ -27,7 +27,7 @@
         <!--</ion-item>-->
 
 
-        <ion-item nav-clear menu-close href="#/app/whoIsFree" class="item item-icon-right">Who is free?
+        <ion-item nav-clear menu-close href="#/app/whoIsFree" class="item item-icon-right" ng-show="loginUser">Who is free?
           <i class="icon ion-help-circled"></i>
         </ion-item>
         <!--<ion-item nav-clear menu-close href="#/app/playlists">Playlists</ion-item>-->

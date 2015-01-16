@@ -72,17 +72,16 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'ngMessages
 //      }
 //    })
 
-    .state('app.single', {
-      url: "/playlists/:playlistId",
+    .state('app.landing', {
+      url: "/landing",
       views: {
         'menuContent' :{
-          templateUrl: "templates/playlist.html",
-          controller: 'PlaylistCtrl'
+          templateUrl: "templates/landing.html"
         }
       }
     });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/whoIsFree');
+  $urlRouterProvider.otherwise('/app/landing');
 });
 
 
